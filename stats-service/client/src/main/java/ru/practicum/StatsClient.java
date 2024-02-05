@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ru.practicum.Constants.FORMATTER;
+
 @Service
 public class StatsClient {
     private final RestTemplate rest;
@@ -30,11 +32,11 @@ public class StatsClient {
                         .build();
     }
 
-    protected ResponseEntity<Object> getStats(LocalDateTime start, LocalDateTime end, @Nullable String[] uris,
+    protected ResponseEntity<Object> getStats(LocalDateTime start, LocalDateTime end, List<String> uris,
                                               Boolean unique) {
         Map<String, Object> parameters = new HashMap<>(Map.of(
-                "start", start,
-                "end", end,
+                "start", start.format(FORMATTER),
+                "end", end.format(FORMATTER),
                 "unique", unique
         ));
         if (uris == null) {

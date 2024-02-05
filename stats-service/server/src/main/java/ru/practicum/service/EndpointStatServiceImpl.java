@@ -20,7 +20,7 @@ public class EndpointStatServiceImpl implements EndpointStatService {
     }
 
     @Override
-    public List<EndpointStat> getStats(LocalDateTime start, LocalDateTime end, String[] uris, Boolean unique) {
+    public List<EndpointStat> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         if (unique) {
             return (uris == null) ? repository.getStatsByUniqueIps(start, end) :
                     repository.getStatsByUniqueIpsWithUris(start, end, uris);

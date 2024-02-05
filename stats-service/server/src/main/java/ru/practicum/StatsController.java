@@ -27,7 +27,7 @@ public class StatsController {
     @GetMapping("/stats")
     public List<EndpointStat> getStats(@RequestParam @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime start,
                                        @RequestParam @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime end,
-                                       @RequestParam(required = false) String[] uris,
+                                       @RequestParam(required = false) List<String> uris,
                                        @RequestParam(defaultValue = "false") Boolean unique) {
         if (end.isBefore(start)) {
             throw new ConstraintViolationException("Start date cannot go before end date",

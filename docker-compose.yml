@@ -22,7 +22,7 @@ services:
     image: explorewithme_stats_server_image
     container_name: stats-server
     ports:
-      - "9191:9191"
+      - "9090:9090"
     depends_on:
       - stats-db
       - stats-dto
@@ -37,12 +37,9 @@ services:
     image: explorewithme_stats_client_image
     container_name: stats-client
     ports:
-      - "9090:9090"
+      - "8989:8989"
     depends_on:
-      - stats-server
       - stats-dto
-    environment:
-      - STATS_SERVER_URL=http://stats-server:9191
 
   ewm-db:
     image: postgres:14-alpine

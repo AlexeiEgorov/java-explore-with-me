@@ -11,6 +11,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,8 @@ public class StatsClient {
                         .build();
     }
 
-    protected ResponseEntity<Object> getStats(String start, String end, @Nullable String[] uris, Boolean unique) {
+    protected ResponseEntity<Object> getStats(LocalDateTime start, LocalDateTime end, @Nullable String[] uris,
+                                              Boolean unique) {
         Map<String, Object> parameters = new HashMap<>(Map.of(
                 "start", start,
                 "end", end,
@@ -38,7 +40,7 @@ public class StatsClient {
         if (uris == null) {
             return makeAndSendRequest(HttpMethod.GET, GET_STATS_REQ, parameters, null);
         } else {
-            parameters.put("uris", uris);
+            parameters.put("uris", String.join(",", uris));
             return makeAndSendRequest(HttpMethod.GET, GET_STATS_REQ_WITH_URIS, parameters, null);
         }
     }

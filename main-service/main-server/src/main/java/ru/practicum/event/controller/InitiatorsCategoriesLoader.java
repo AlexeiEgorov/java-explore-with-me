@@ -38,7 +38,7 @@ public class InitiatorsCategoriesLoader {
                 .forEach(initiator -> initiatorsMap.put(initiator.getId(), initiator));
         return initiatorsMap;
     }
-    
+
     public List<EventResponseDto> loadFullResponseDtos(List<Event> events) {
         if (events.isEmpty()) {
             return List.of();

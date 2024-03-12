@@ -1,6 +1,5 @@
 package ru.practicum.compilation.service;
 
-import org.springframework.data.repository.query.Param;
 import ru.practicum.dto.CompilationDto;
 import ru.practicum.compilation.model.Compilation;
 

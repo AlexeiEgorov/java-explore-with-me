@@ -15,6 +15,7 @@ import ru.practicum.event.model.EventPatchDto;
 import ru.practicum.event.model.StartAfterTwoHoursFromNow;
 import ru.practicum.model.ConstraintViolationException;
 import ru.practicum.model.EventStatus;
+import ru.practicum.model.NotAllowedActionException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -43,6 +44,13 @@ public class AdminEventClientController {
             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
             @RequestParam(defaultValue = "10") @Positive Integer size
     ) {
+        if (rangeStart != null && rangeEnd != null) {
+            LocalDateTime start = LocalDateTime.parse(rangeStart, FORMATTER);
+            LocalDateTime end = LocalDateTime.parse(rangeEnd, FORMATTER);
+            if (end.isBefore(start)) {
+                throw new NotAllowedActionException("End time cannot go before start time");
+            }
+        }
         ResponseEntity<Object> resp = client.searchEventsForAdmin(users, states, categories, rangeStart, rangeEnd,
                 from, size);
         if (resp.getStatusCode() == HttpStatus.OK) {

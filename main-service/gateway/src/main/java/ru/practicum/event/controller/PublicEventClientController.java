@@ -16,7 +16,7 @@ import ru.practicum.dto.EndpointHitStatDto;
 import ru.practicum.dto.EventPreviewResponseDto;
 import ru.practicum.dto.EventResponseDto;
 import ru.practicum.event.EventClient;
-import ru.practicum.model.ConstraintViolationException;
+import ru.practicum.model.NotAllowedActionException;
 import ru.practicum.model.SortType;
 import ru.practicum.stats.StatsClient;
 
@@ -55,7 +55,7 @@ public class PublicEventClientController {
             LocalDateTime start = LocalDateTime.parse(rangeStart, FORMATTER);
             LocalDateTime end = LocalDateTime.parse(rangeEnd, FORMATTER);
             if (end.isBefore(start)) {
-                throw new ConstraintViolationException("End time cannot go before start time");
+                throw new NotAllowedActionException("End time cannot go before start time");
             }
         }
         String requestTime = LocalDateTime.now().format(FORMATTER);

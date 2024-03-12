@@ -15,7 +15,7 @@ import ru.practicum.event.EventClient;
 import ru.practicum.event.model.EventDto;
 import ru.practicum.event.model.EventPatchDto;
 import ru.practicum.event.model.StartAfterTwoHoursFromNow;
-import ru.practicum.model.ConstraintViolationException;
+import ru.practicum.model.NotAllowedActionException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -39,7 +39,7 @@ public class UserEventClientController {
         if (eventDto.getEventDate() != null) {
             LocalDateTime time = LocalDateTime.parse(eventDto.getEventDate(), FORMATTER);
             if (!time.isAfter(LocalDateTime.now().plusHours(2))) {
-                throw new ConstraintViolationException("Start of event cannot be earlier than two hours in the future");
+                throw new NotAllowedActionException("Start of event cannot be earlier than two hours in the future");
             }
         }
 

@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.practicum.model.ConstraintViolationException;
+import ru.practicum.model.NotAllowedActionException;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -27,16 +27,15 @@ public class StatsClientController {
         LocalDateTime startTime = LocalDateTime.parse(start, FORMATTER);
         LocalDateTime endTime = LocalDateTime.parse(end, FORMATTER);
         if (endTime.isBefore(startTime)) {
-            throw new ConstraintViolationException("Start date cannot go before end date",
-                    String.format("start: %s, end: %s", start, end));
+            throw new NotAllowedActionException(String.format("Start date cannot go before end date: %s, end: %s",
+                    start, end));
         }
         try {
             String encodedStartTimeStr = URLEncoder.encode(start, StandardCharsets.UTF_8);
             String encodedEndTimeStr = URLEncoder.encode(end, StandardCharsets.UTF_8);
             return client.getStats(encodedStartTimeStr, encodedEndTimeStr, uris, unique);
         } catch (Exception e) {
-            throw new ConstraintViolationException("Wrong time encoding",
-                    String.format("start: %s, end: %s", start, end));
+            throw new NotAllowedActionException(String.format("Wrong time encoding start: %s, end: %s", start, end));
         }
     }
 }

@@ -54,13 +54,13 @@ public class ErrorHandler {
                 LocalDateTime.now().format(FORMATTER));
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse onConstraintValidationException(ru.practicum.model.ConstraintViolationException e) {
-        log.debug("Получен статус 400 Conflict (ru.practicum.ConstraintViolationException); value:{}", e.getValue());
-        return new ErrorResponse(BAD_REQUEST, "Incorrectly made request", e.getMessage(),
-                LocalDateTime.now().format(FORMATTER));
-    }
+    //@ExceptionHandler
+    //@ResponseStatus(HttpStatus.BAD_REQUEST)
+    //public ErrorResponse onConstraintValidationException(ru.practicum.model.ConstraintViolationException e) {
+    //    log.debug("Получен статус 400 Conflict (ru.practicum.ConstraintViolationException); value:{}", e.getValue());
+    //    return new ErrorResponse(BAD_REQUEST, "Incorrectly made request", e.getMessage(),
+    //            LocalDateTime.now().format(FORMATTER));
+    //}
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -85,6 +85,13 @@ public class ErrorHandler {
         log.debug("Получен статус 400 Bad request (ConversionFailedException): {}", e.getMessage());
         return new ErrorResponse(BAD_REQUEST, "Incorrectly made request", e.getMessage(),
                 LocalDateTime.now().format(FORMATTER));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse onConstraintValidationException(ru.practicum.model.ConstraintViolationException e) {
+        log.debug("Получен статус 409 Conflict (ru.practicum.ConstraintViolationException); value:{}", e.getValue());
+        return new ErrorResponse(FORBIDDEN, CONS_VIOL, e.getMessage(), LocalDateTime.now().format(FORMATTER));
     }
 
     @ExceptionHandler

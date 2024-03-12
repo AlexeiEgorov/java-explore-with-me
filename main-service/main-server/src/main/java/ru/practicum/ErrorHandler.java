@@ -20,12 +20,10 @@ import static ru.practicum.Constants.*;
 public class ErrorHandler {
     private static final String ENTITY_NOT_FOUND = "%s with id=%d was not found";
     private static final String NOT_FOUND = "NOT_FOUND";
-    private static final String FORBIDDEN = "FORBIDDEN";
     private static final String REQ_OBJ_NOT_FOUND = "The required object was not found.";
     private static final String INTERNAL_SERV_ERROR = "Internal server error.";
     private static final String INCORR_MADE_REQ = "Incorrectly made request";
     private static final String INTEGRITY_CONS_VIOL = "Integrity constraint has been violated.";
-    private static final String CONS_VIOL = "For the requested operation the conditions are not met.";
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

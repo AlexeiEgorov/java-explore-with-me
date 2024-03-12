@@ -1,70 +1,75 @@
 version: '3.1'
 services:
-  stats-db:
+  main-db:
     image: postgres:14-alpine
     volumes:
       - /var/lib/postgresql1/data/
     container_name: postgresql1
     ports:
-      - "6541:5432"
+      - "6542:5423"
     environment:
-      - POSTGRES_DB=explorewithme
+      - POSTGRES_DB=ewm
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=iamroot
 
-  stats-dto:
-    build: ./stats-service/dto
-    image: explorewithme_stats_dto_image
-    container_name: stats-dto
+  stats-db:
+    image: postgres:14-alpine
+    volumes:
+      - /var/lib/postgresql2/data/
+    container_name: postgresql2
+    ports:
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=ewm
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=iamroot
+
+  common:
+    build: ./common
+    image: explorewithme_common_image
+    container_name: common
+
+  main-server:
+    build: ./main-service/main-server
+    image: explorewithme_main_server_image
+    container_name: main-server
+    ports:
+      - "8181:8181"
+    depends_on:
+      - main-db
+      - stats-db
+      - common
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewm
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=iamroot
+      - DRIVER_CLASS_NAME=org.postgresql.Driver
 
   stats-server:
-    build: ./stats-service/server
+    build: ./stats-service
     image: explorewithme_stats_server_image
     container_name: stats-server
     ports:
       - "9090:9090"
     depends_on:
       - stats-db
-      - stats-dto
+      - common
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/explorewithme
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewm
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=iamroot
       - DRIVER_CLASS_NAME=org.postgresql.Driver
 
-  stats-client:
-    build: ./stats-service/client
-    image: explorewithme_stats_client_image
-    container_name: stats-client
-    ports:
-      - "8989:8989"
-    depends_on:
-      - stats-dto
-
-  ewm-db:
-    image: postgres:14-alpine
-    volumes:
-      - /var/lib/postgresql2/data/
-    container_name: postgresql2
-    ports:
-      - "5700:5400"
-    environment:
-      - POSTGRES_DB=shareit
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=iamroot
-
-  ewm-service:
-    build: ./main-service
-    image: explorewithme_main_service_image
-    container_name: main-service
+  gateway:
+    build: ./main-service/gateway
+    image: explorewithme_gateway_image
+    container_name: gateway
     ports:
       - "8080:8080"
     depends_on:
-      - ewm-db
+      - common
+      - main-server
       - stats-server
     environment:
-      - STATS_CLIENT_URL=http://stats-server:9090
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5400/explorewithme
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=iamroot
-      - DRIVER_CLASS_NAME=org.postgresql.Driver
+      - MAIN_SERVER_URL=http://main-server:8181
+      - STATS_SERVER_URL=http://stats-server:9090

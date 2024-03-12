@@ -17,10 +17,10 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>main-service</module>
+        <module>main-service/main-server</module>
+		<module>main-service/gateway</module>
+		<module>common</module>
 		<module>stats-service</module>
-		<module>stats-service/client</module>
-		<module>stats-service/dto</module>
-		<module>stats-service/server</module>
 	</modules>
 
 	<properties>

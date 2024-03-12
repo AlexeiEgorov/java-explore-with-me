@@ -73,14 +73,16 @@ public class EventServiceImpl implements EventService {
         if (categories != null && !categories.isEmpty()) {
             specification = specification.and(EventSpecifications.hasCategories(categories));
         }
-        if (rangeStart != null && rangeEnd != null) {
-            LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
-            LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
-            specification = specification.and(EventSpecifications.hasEventDateBetween(startDateTime, endDateTime));
-        } else if (rangeStart != null) {
+        //if (rangeStart != null && rangeEnd != null) {
+        //    LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
+        //    LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
+        //    specification = specification.and(EventSpecifications.hasEventDateBetween(startDateTime, endDateTime));
+        //} else
+        if (rangeStart != null) {
             LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
             specification = specification.and(EventSpecifications.hasEventDateAfter(startDateTime));
-        } else if (rangeEnd != null) {
+        }
+        if (rangeEnd != null) {
             LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
             specification = specification.and(EventSpecifications.hasEventDateBefore(endDateTime));
         }

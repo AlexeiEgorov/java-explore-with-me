@@ -56,9 +56,9 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse onNotAllowedActionException(NotAllowedActionException e) {
-        log.debug("Получен статус 409 Conflict (NotAllowedActionException); value:{}", e.getValue());
+        log.debug("Получен статус 400 Bad request (NotAllowedActionException); value:{}", e.getValue());
         return new ErrorResponse(BAD_REQUEST, INCORR_MADE_REQ, e.getMessage(),
                 LocalDateTime.now().format(FORMATTER));
     }

@@ -1,8 +1,6 @@
 package ru.practicum.user.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -33,7 +31,7 @@ public class AdminUserClientController {
             // Additional logic or validation if needed
             return ResponseEntity.status(HttpStatus.CREATED).body(addedUserDto);
         } else {
-            return ResponseEntity.status(responseEntity.getStatusCode()).body("An error occurred while adding the user");
+            return ResponseEntity.status(responseEntity.getStatusCode()).body(responseEntity.getBody());
         }
     }
 

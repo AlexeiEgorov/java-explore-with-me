@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public class UserEventServerController {
     private final EventService service;
     private final InitiatorsCategoriesLoader initiatorsCategoriesLoader;
+    //
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

@@ -13,6 +13,7 @@ import ru.practicum.model.Violation;
 
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,7 +101,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse onUnexpectedError(Throwable e) {
         log.debug("Получен статус 500 Internal server error {}", e.getMessage(), e);
-        return new ErrorResponse(INTERNAL_SERVER_ERROR, "Incorrectly made request", e.getMessage(),
+        return new ErrorResponse(INTERNAL_SERVER_ERROR, Arrays.toString(e.getStackTrace()), e.getMessage(),
                 LocalDateTime.now().format(FORMATTER));
     }
 }

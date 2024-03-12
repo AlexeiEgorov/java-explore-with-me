@@ -12,6 +12,7 @@ import ru.practicum.model.ErrorResponse;
 import ru.practicum.model.NotAllowedActionException;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static ru.practicum.Constants.*;
 
@@ -68,7 +69,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse onUnexpectedError(Throwable e) {
         log.debug("Получен статус 500 Internal server error {}", e.getMessage(), e);
-        return new ErrorResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERV_ERROR, e.getMessage(),
+        return new ErrorResponse(INTERNAL_SERVER_ERROR, Arrays.toString(e.getStackTrace()), e.getMessage(),
                 LocalDateTime.now().format(FORMATTER));
     }
 }

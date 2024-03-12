@@ -25,5 +25,6 @@ public class EventRequest {
     private Event event;
     @ManyToOne(fetch = FetchType.LAZY)
     private User requester;
+    @Enumerated(EnumType.STRING)
     private EventRequestStatus status;
 }

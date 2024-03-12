@@ -70,7 +70,7 @@ public class EventRequestServiceImpl implements EventRequestService {
             throw new NotAllowedActionException("Request without pending status, cannot be changed");
         }
         eventRequest.setStatus(EventRequestStatus.CANCELED);
-        repository.cancel(requestId);
+        repository.cancel(requestId, EventRequestStatus.CANCELED);
         return eventRequest;
     }
 

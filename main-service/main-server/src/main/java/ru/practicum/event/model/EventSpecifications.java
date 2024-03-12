@@ -20,10 +20,10 @@ public class EventSpecifications {
         return (root, query, criteriaBuilder) -> root.get("category").get("id").in(categoryIds);
     }
 
-    public static Specification<Event> hasEventDateBetween(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        return Specification.where(hasEventDateAfter(startDateTime))
-                .and(hasEventDateBefore(endDateTime));
-    }
+    //public static Specification<Event> hasEventDateBetween(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    //    return Specification.where(hasEventDateAfter(startDateTime))
+    //            .and(hasEventDateBefore(endDateTime));
+    //}
 
     public static Specification<Event> hasEventDateAfter(LocalDateTime startDateTime) {
         return (root, query, criteriaBuilder) ->

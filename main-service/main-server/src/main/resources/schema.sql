@@ -19,7 +19,7 @@ created_on TIMESTAMP WITHOUT TIME ZONE,
 confirmed_requests INT,
 description VARCHAR(7000),
 event_date TIMESTAMP WITHOUT TIME ZONE,
-initiator_id INT REFERENCES users (id) ON DELETE CASCADE,
+initiator_id BIGINT REFERENCES users (id) ON DELETE CASCADE,
 lat DOUBLE PRECISION,
 lon DOUBLE PRECISION,
 paid BOOLEAN,
@@ -35,7 +35,7 @@ id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 created TIMESTAMP WITHOUT TIME ZONE,
 event_id BIGINT REFERENCES events (id) ON DELETE CASCADE,
 requester_id BIGINT REFERENCES users (id) ON DELETE CASCADE,
-status VARCHAR(20),
+status VARCHAR(30),
 CONSTRAINT uq_request UNIQUE(event_id, requester_id)
 );
 

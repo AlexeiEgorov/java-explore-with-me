@@ -8,7 +8,7 @@ import java.util.List;
 
 public class EventSpecifications {
 
-    public static Specification<Event> hasUsers(List<Integer> userIds) {
+    public static Specification<Event> hasUsers(List<Long> userIds) {
         return (root, query, criteriaBuilder) -> root.get("initiator").get("id").in(userIds);
     }
 
@@ -16,7 +16,7 @@ public class EventSpecifications {
         return (root, query, criteriaBuilder) -> root.get("state").in(states);
     }
 
-    public static Specification<Event> hasCategories(List<Integer> categoryIds) {
+    public static Specification<Event> hasCategories(List<Long> categoryIds) {
         return (root, query, criteriaBuilder) -> root.get("category").get("id").in(categoryIds);
     }
 

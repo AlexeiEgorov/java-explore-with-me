@@ -23,7 +23,7 @@ public class PublicEventServerController {
     @GetMapping
     public List<EventPreviewResponseDto> searchEvents(
             @RequestParam(required = false) String text,
-            @RequestParam(required = false) List<Integer> categories,
+            @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) Boolean paid,
             @RequestParam(required = false) String rangeStart,
             @RequestParam(required = false) String rangeEnd,

@@ -66,9 +66,9 @@ public class EventClient extends BaseClient {
     }
 
     public ResponseEntity<Object> searchEventsForAdmin(
-            List<Integer> users,
+            List<Long> users,
             List<EventStatus> states,
-            List<Integer> categories,
+            List<Long> categories,
             String rangeStart,
             String rangeEnd,
             Integer from,
@@ -105,7 +105,7 @@ public class EventClient extends BaseClient {
 
     public ResponseEntity<Object> searchEventsForVisitor(
             String text,
-            List<Integer> categories,
+            List<Long> categories,
             Boolean paid,
             String rangeStart,
             String rangeEnd,

@@ -9,7 +9,6 @@ import ru.practicum.event.model.Event;
 import ru.practicum.eventrequest.model.EventRequest;
 import ru.practicum.model.EventStatus;
 import ru.practicum.model.SortType;
-import ru.practicum.user.model.User;
 
 import java.util.List;
 import java.util.Set;
@@ -19,8 +18,6 @@ public interface EventService {
     Event patch(Long userId, Long id, EventPatchDto eventPatchDto);
 
     Category getCategory(Long id);
-
-    User getUser(Long id);
 
     List<Event> searchEventsForAdmin(
             List<Long> users,
@@ -48,7 +45,7 @@ public interface EventService {
 
     Event reviewEvent(Long id, EventPatchDto eventPatchDto);
 
-    List<Event> searchEventsForVisitor(String text, List<Integer> categories, Boolean paid, String rangeStart,
+    List<Event> searchEventsForVisitor(String text, List<Long> categories, Boolean paid, String rangeStart,
                                        String rangeEnd, Boolean onlyAvailable, SortType sort, Integer from,
                                        Integer size);
 

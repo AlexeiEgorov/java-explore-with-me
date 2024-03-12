@@ -61,38 +61,33 @@ public class EventServiceImpl implements EventService {
             Integer from,
             Integer size
     ) {
-        //Specification<Event> specification = Specification.where(null);
-//
-        //if (users != null && !users.isEmpty()) {
-        //    specification = specification.and(EventSpecifications.hasUsers(users));
-        //}
-        //if (states != null && !states.isEmpty()) {
-        //    System.out.println(states);
-        //    specification = specification.and(EventSpecifications.hasStates(states));
-        //}
-        //if (categories != null && !categories.isEmpty()) {
-        //    specification = specification.and(EventSpecifications.hasCategories(categories));
-        //}
-        //if (rangeStart != null && rangeEnd != null) {
-        //    LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
-        //    LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
-        //    specification = specification.and(EventSpecifications.hasEventDateBetween(startDateTime, endDateTime));
-        //} else if (rangeStart != null) {
-        //    LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
-        //    specification = specification.and(EventSpecifications.hasEventDateAfter(startDateTime));
-        //} else if (rangeEnd != null) {
-        //    LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
-        //    specification = specification.and(EventSpecifications.hasEventDateBefore(endDateTime));
-        //}
-        LocalDateTime start = LocalDateTime.parse(rangeStart, FORMATTER);
-        LocalDateTime end = LocalDateTime.parse(rangeEnd, FORMATTER);
+        Specification<Event> specification = Specification.where(null);
 
-        //Sort eventSort = Sort.by("id").descending();
-        PageRequest pageRequest = PageRequest.of(from, size);
-        //Page<Event> eventsPage = repository.findAll(specification, pageable);
-        List<Event> eventsPage = repository.findAllByParam(users, states, categories, start, end, pageRequest);
+        if (users != null && !users.isEmpty()) {
+            specification = specification.and(EventSpecifications.hasUsers(users));
+        }
+        if (states != null && !states.isEmpty()) {
+            System.out.println(states);
+            specification = specification.and(EventSpecifications.hasStates(states));
+        }
+        if (categories != null && !categories.isEmpty()) {
+            specification = specification.and(EventSpecifications.hasCategories(categories));
+        }
+        if (rangeStart != null && rangeEnd != null) {
+            LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
+            LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
+            specification = specification.and(EventSpecifications.hasEventDateBetween(startDateTime, endDateTime));
+        } else if (rangeStart != null) {
+            LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
+            specification = specification.and(EventSpecifications.hasEventDateAfter(startDateTime));
+        } else if (rangeEnd != null) {
+            LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
+            specification = specification.and(EventSpecifications.hasEventDateBefore(endDateTime));
+        }
+        Pageable pageable = PageRequest.of(from, size);
+        Page<Event> eventsPage = repository.findAll(specification, pageable);
 
-        return eventsPage;
+        return eventsPage.getContent();
     }
 
     @Override
@@ -221,7 +216,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> searchEventsForVisitor(String text, List<Integer> categories, Boolean paid, String rangeStart,
+    public List<Event> searchEventsForVisitor(String text, List<Long> categories, Boolean paid, String rangeStart,
                                               String rangeEnd, Boolean onlyAvailable, SortType sort, Integer from,
                                               Integer size) {
         Specification<Event> specification = Specification.where(null);
@@ -324,11 +319,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public Category getCategory(Long id) {
         return categoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(CATEGORY, id));
-    }
-
-    @Override
-    public User getUser(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(USER, id));
     }
 
     @Override

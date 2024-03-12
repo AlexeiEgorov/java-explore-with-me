@@ -36,9 +36,9 @@ public class AdminEventClientController {
 
     @GetMapping
     public ResponseEntity<Object> searchEvents(
-            @RequestParam(required = false) List<Integer> users,
+            @RequestParam(required = false) List<Long> users,
             @RequestParam(required = false) List<EventStatus> states,
-            @RequestParam(required = false) List<Integer> categories,
+            @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) String rangeStart,
             @RequestParam(required = false) String rangeEnd,
             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,

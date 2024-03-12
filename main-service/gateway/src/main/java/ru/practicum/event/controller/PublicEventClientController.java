@@ -77,7 +77,7 @@ public class PublicEventClientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getEventForVisitor(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<Object> getEventForVisitor(@PathVariable @Positive Long id, HttpServletRequest request) {
         String requestTime = LocalDateTime.now().format(FORMATTER);
 
         statsClient.addEndpointHitStat(

@@ -23,6 +23,9 @@ public class ViewsLoader {
     private final StatsClient statsClient;
 
     public <T extends EventRespDto> List<T> loadViewsForEventDtos(List<T> events) {
+        if (events.isEmpty()) {
+            return List.of();
+        }
         Map<String, List<EventRespDto>> eventMap = new HashMap<>();
         for (EventRespDto event : events) {
             eventMap.computeIfAbsent("/events/" + event.getId().toString(), k -> new ArrayList<>()).add(event);

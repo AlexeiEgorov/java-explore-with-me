@@ -27,7 +27,7 @@ public class PublicCategoryClientController {
     }
 
     @GetMapping("/{catId}")
-    public ResponseEntity<Object> get(@PathVariable Long catId) {
+    public ResponseEntity<Object> get(@PathVariable @Positive Long catId) {
         return client.get(catId);
     }
 }

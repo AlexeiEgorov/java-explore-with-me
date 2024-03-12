@@ -52,7 +52,8 @@ public class AdminEventClientController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> reviewEvent(@PathVariable Long id, @RequestBody @Valid EventPatchDto eventPatchDto) {
+    public ResponseEntity<Object> reviewEvent(@PathVariable @Positive Long id,
+                                              @RequestBody @Valid EventPatchDto eventPatchDto) {
         if (eventPatchDto.getEventDate() != null) {
             @StartAfterTwoHoursFromNow
             LocalDateTime time = LocalDateTime.parse(eventPatchDto.getEventDate(), FORMATTER);

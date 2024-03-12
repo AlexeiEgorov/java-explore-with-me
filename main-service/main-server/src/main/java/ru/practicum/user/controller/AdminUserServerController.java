@@ -28,7 +28,8 @@ public class AdminUserServerController {
     public Collection<ResponseUserDto> findUsers(@RequestParam(required = false) List<Long> ids,
                                                  @RequestParam Integer from,
                                                  @RequestParam Integer size) {
-        return userService.findUsers(ids, from, size).stream().map(UserMapper::toResponseDto).collect(Collectors.toList());
+        return userService.findUsers(ids, from, size).stream().map(UserMapper::toResponseDto)
+                .collect(Collectors.toList());
     }
 
     @DeleteMapping("/{id}")

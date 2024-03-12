@@ -13,8 +13,11 @@ import ru.practicum.dto.CompilationRespDto;
 import ru.practicum.ViewsLoader;
 import ru.practicum.model.Marker;
 
+import javax.validation.constraints.Positive;
+
 @Controller
 @AllArgsConstructor
+@Validated
 @RequestMapping(path = "/admin/compilations")
 public class AdminCompilationClientController {
     private final CompilationClient client;
@@ -33,12 +36,12 @@ public class AdminCompilationClientController {
     }
 
     @DeleteMapping("/{compId}")
-    public ResponseEntity<Object> delete(@PathVariable Long compId) {
+    public ResponseEntity<Object> delete(@PathVariable @Positive Long compId) {
         return client.delete(compId);
     }
 
     @PatchMapping("/{compId}")
-    public ResponseEntity<Object> patch(@PathVariable Long compId,
+    public ResponseEntity<Object> patch(@PathVariable @Positive Long compId,
                              @RequestBody @Validated(Marker.Update.class) CompilationDto compilationDto) {
         ResponseEntity<Object> resp = client.patch(compId, compilationDto);
         if (resp.getStatusCode() == HttpStatus.OK) {

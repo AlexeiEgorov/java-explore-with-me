@@ -59,7 +59,7 @@ public class UserEventClientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getUserEvent(@PathVariable Long userId, @PathVariable Long id) {
+    public ResponseEntity<Object> getUserEvent(@PathVariable Long userId, @PathVariable @Positive Long id) {
         ResponseEntity<Object> resp = client.getUserEvent(userId, id);
         if (resp.getStatusCode() == HttpStatus.OK) {
             EventResponseDto eventDto = objectMapper.convertValue(resp.getBody(), EventResponseDto.class);
@@ -69,7 +69,7 @@ public class UserEventClientController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> patch(@PathVariable Long userId, @PathVariable Long id,
+    public ResponseEntity<Object> patch(@PathVariable Long userId, @PathVariable @Positive Long id,
                                         @Valid @RequestBody EventPatchDto eventPatchDto) {
         if (eventPatchDto.getEventDate() != null) {
             @StartAfterTwoHoursFromNow
@@ -79,13 +79,13 @@ public class UserEventClientController {
     }
 
     @GetMapping("/{id}/requests")
-    public ResponseEntity<Object> getEventRequests(@PathVariable Long userId, @PathVariable Long id) {
+    public ResponseEntity<Object> getEventRequests(@PathVariable Long userId, @PathVariable @Positive Long id) {
         return client.getEventRequests(userId, id);
     }
 
     @PatchMapping("/{id}/requests")
     public ResponseEntity<Object> updateEventRequestsStatuses(@PathVariable Long userId,
-                                                              @PathVariable Long id,
+                                                              @PathVariable @Positive Long id,
                                                               @RequestBody @Valid
                                                               EventRequestsConfirmationDto
                                                                       eventRequestsConfirmationDto) {

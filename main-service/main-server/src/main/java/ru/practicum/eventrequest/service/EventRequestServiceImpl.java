@@ -52,7 +52,8 @@ public class EventRequestServiceImpl implements EventRequestService {
         } else {
             state = EventRequestStatus.PENDING;
         }
-        EventRequest eventRequest = new EventRequest(null, LocalDateTime.now(), event, getUser(userId), state);
+        EventRequest eventRequest = new EventRequest(null, LocalDateTime.now(), event,
+                new User(userId, null, null), state);
         return repository.save(eventRequest);
     }
 

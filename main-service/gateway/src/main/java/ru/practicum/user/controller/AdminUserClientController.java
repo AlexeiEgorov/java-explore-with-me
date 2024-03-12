@@ -33,7 +33,7 @@ public class AdminUserClientController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@PathVariable Long id) {
+    public ResponseEntity<Object> delete(@PathVariable @Positive Long id) {
         return client.delete(id);
     }
 }

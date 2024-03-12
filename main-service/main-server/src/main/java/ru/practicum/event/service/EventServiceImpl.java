@@ -86,9 +86,11 @@ public class EventServiceImpl implements EventService {
             LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
             specification = specification.and(EventSpecifications.hasEventDateBefore(endDateTime));
         }
-        Pageable pageable = PageRequest.of(from, size);
+        Sort eventSort = Sort.by("id").descending();
+        Pageable pageable = PageRequest.of(from, size, eventSort);
+        Page<Event> eventsPage = repository.findAll(specification, pageable);
 
-        return repository.findAll(specification, pageable).getContent();
+        return eventsPage.getContent();
     }
 
     @Override

@@ -15,6 +15,7 @@ import ru.practicum.ViewsLoader;
 import ru.practicum.compilation.CompilationClient;
 import ru.practicum.dto.CompilationRespDto;
 import ru.practicum.dto.EventPreviewResponseDto;
+import ru.practicum.model.ConstraintViolationException;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -51,6 +52,9 @@ public class PublicCompilationClientController {
 
     @GetMapping("/{compId}")
     public ResponseEntity<Object> getCompilation(@PathVariable Long compId) {
+        if (compId < 1) {
+            throw new ConstraintViolationException("Id should be positive");
+        }
         ResponseEntity<Object> resp = client.getCompilation(compId);
         if (resp.getStatusCode() == HttpStatus.OK) {
             CompilationRespDto dto = objectMapper.convertValue(resp.getBody(), CompilationRespDto.class);

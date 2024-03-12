@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.category.CategoryClient;
+import ru.practicum.model.ConstraintViolationException;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -27,7 +28,10 @@ public class PublicCategoryClientController {
     }
 
     @GetMapping("/{catId}")
-    public ResponseEntity<Object> get(@PathVariable @Positive Long catId) {
+    public ResponseEntity<Object> get(@PathVariable Long catId) {
+        if (catId < 1) {
+            throw new ConstraintViolationException("Id should be positive");
+        }
         return client.get(catId);
     }
 }

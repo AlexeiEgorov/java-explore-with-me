@@ -13,6 +13,7 @@ import ru.practicum.dto.EventResponseDto;
 import ru.practicum.event.EventClient;
 import ru.practicum.event.model.EventPatchDto;
 import ru.practicum.event.model.StartAfterTwoHoursFromNow;
+import ru.practicum.model.ConstraintViolationException;
 import ru.practicum.model.EventStatus;
 
 import javax.validation.Valid;
@@ -52,8 +53,11 @@ public class AdminEventClientController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> reviewEvent(@PathVariable @Positive Long id,
+    public ResponseEntity<Object> reviewEvent(@PathVariable Long id,
                                               @RequestBody @Valid EventPatchDto eventPatchDto) {
+        if (id < 1) {
+            throw new ConstraintViolationException("Id should be positive");
+        }
         if (eventPatchDto.getEventDate() != null) {
             @StartAfterTwoHoursFromNow
             LocalDateTime time = LocalDateTime.parse(eventPatchDto.getEventDate(), FORMATTER);

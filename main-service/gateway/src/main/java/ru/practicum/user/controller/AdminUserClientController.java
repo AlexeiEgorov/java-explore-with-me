@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.model.ConstraintViolationException;
 import ru.practicum.user.UserClient;
 import ru.practicum.dto.UserDto;
 
@@ -28,12 +29,15 @@ public class AdminUserClientController {
     @GetMapping
     public ResponseEntity<Object> findUsers(@RequestParam(required = false) List<Long> ids,
                                             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
-                                            @RequestParam(defaultValue = "10")  @Positive Integer size) {
+                                            @RequestParam(defaultValue = "10") @Positive Integer size) {
         return client.findUsers(ids, from, size);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable @Positive Long id) {
+        if (id < 1) {
+            throw new ConstraintViolationException("Id should be positive");
+        }
         return client.delete(id);
     }
 }

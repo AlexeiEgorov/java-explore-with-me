@@ -16,6 +16,7 @@ import ru.practicum.dto.EndpointHitStatDto;
 import ru.practicum.dto.EventPreviewResponseDto;
 import ru.practicum.dto.EventResponseDto;
 import ru.practicum.event.EventClient;
+import ru.practicum.model.ConstraintViolationException;
 import ru.practicum.model.NotAllowedActionException;
 import ru.practicum.model.SortType;
 import ru.practicum.stats.StatsClient;
@@ -77,7 +78,10 @@ public class PublicEventClientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getEventForVisitor(@PathVariable @Positive Long id, HttpServletRequest request) {
+    public ResponseEntity<Object> getEventForVisitor(@PathVariable Long id, HttpServletRequest request) {
+        if (id < 1) {
+            throw new ConstraintViolationException("Id should be positive");
+        }
         String requestTime = LocalDateTime.now().format(FORMATTER);
 
         statsClient.addEndpointHitStat(

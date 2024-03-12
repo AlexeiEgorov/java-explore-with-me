@@ -23,9 +23,9 @@ public interface EventService {
     User getUser(Long id);
 
     List<Event> searchEventsForAdmin(
-            List<Integer> users,
+            List<Long> users,
             List<EventStatus> states,
-            List<Integer> categories,
+            List<Long> categories,
             String rangeStart,
             String rangeEnd,
             Integer from,

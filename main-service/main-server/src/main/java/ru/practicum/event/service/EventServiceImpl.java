@@ -53,42 +53,46 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<Event> searchEventsForAdmin(
-            List<Integer> users,
+            List<Long> users,
             List<EventStatus> states,
-            List<Integer> categories,
+            List<Long> categories,
             String rangeStart,
             String rangeEnd,
             Integer from,
             Integer size
     ) {
-        Specification<Event> specification = Specification.where(null);
+        //Specification<Event> specification = Specification.where(null);
+//
+        //if (users != null && !users.isEmpty()) {
+        //    specification = specification.and(EventSpecifications.hasUsers(users));
+        //}
+        //if (states != null && !states.isEmpty()) {
+        //    System.out.println(states);
+        //    specification = specification.and(EventSpecifications.hasStates(states));
+        //}
+        //if (categories != null && !categories.isEmpty()) {
+        //    specification = specification.and(EventSpecifications.hasCategories(categories));
+        //}
+        //if (rangeStart != null && rangeEnd != null) {
+        //    LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
+        //    LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
+        //    specification = specification.and(EventSpecifications.hasEventDateBetween(startDateTime, endDateTime));
+        //} else if (rangeStart != null) {
+        //    LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
+        //    specification = specification.and(EventSpecifications.hasEventDateAfter(startDateTime));
+        //} else if (rangeEnd != null) {
+        //    LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
+        //    specification = specification.and(EventSpecifications.hasEventDateBefore(endDateTime));
+        //}
+        LocalDateTime start = LocalDateTime.parse(rangeStart, FORMATTER);
+        LocalDateTime end = LocalDateTime.parse(rangeEnd, FORMATTER);
 
-        if (users != null && !users.isEmpty()) {
-            specification = specification.and(EventSpecifications.hasUsers(users));
-        }
-        if (states != null && !states.isEmpty()) {
-            System.out.println(states);
-            specification = specification.and(EventSpecifications.hasStates(states));
-        }
-        if (categories != null && !categories.isEmpty()) {
-            specification = specification.and(EventSpecifications.hasCategories(categories));
-        }
-        if (rangeStart != null && rangeEnd != null) {
-            LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
-            LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
-            specification = specification.and(EventSpecifications.hasEventDateBetween(startDateTime, endDateTime));
-        } else if (rangeStart != null) {
-            LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
-            specification = specification.and(EventSpecifications.hasEventDateAfter(startDateTime));
-        } else if (rangeEnd != null) {
-            LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
-            specification = specification.and(EventSpecifications.hasEventDateBefore(endDateTime));
-        }
-        Sort eventSort = Sort.by("id").descending();
-        Pageable pageable = PageRequest.of(from, size, eventSort);
-        Page<Event> eventsPage = repository.findAll(specification, pageable);
+        //Sort eventSort = Sort.by("id").descending();
+        PageRequest pageRequest = PageRequest.of(from, size);
+        //Page<Event> eventsPage = repository.findAll(specification, pageable);
+        List<Event> eventsPage = repository.findAllByParam(users, states, categories, start, end, pageRequest);
 
-        return eventsPage.getContent();
+        return eventsPage;
     }
 
     @Override

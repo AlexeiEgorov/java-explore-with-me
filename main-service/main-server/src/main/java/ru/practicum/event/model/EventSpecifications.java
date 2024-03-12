@@ -27,12 +27,12 @@ public class EventSpecifications {
 
     public static Specification<Event> hasEventDateAfter(LocalDateTime startDateTime) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.greaterThan(root.get("eventDate"), startDateTime);
+                criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), startDateTime);
     }
 
     public static Specification<Event> hasEventDateBefore(LocalDateTime endDateTime) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.lessThan(root.get("eventDate"), endDateTime);
+                criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), endDateTime);
     }
 
     public static Specification<Event> containsText(String text) {

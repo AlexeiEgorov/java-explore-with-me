@@ -24,6 +24,8 @@ public class AdminUserClientController {
     private final UserClient client;
     private final ObjectMapper objectMapper;
 
+    //
+
     @PostMapping
     public ResponseEntity<?> add(@RequestBody @Valid UserDto userDto) {
         ResponseEntity<Object> responseEntity = client.add(userDto);

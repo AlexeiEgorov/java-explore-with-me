@@ -31,8 +31,7 @@ public class AdminUserClientController {
         ResponseEntity<Object> responseEntity = client.add(userDto);
 
         if (responseEntity.getStatusCode() == HttpStatus.CREATED) {
-            UserDto addedUserDto = objectMapper.convertValue(responseEntity.getBody(), UserDto.class);;
-            // Additional logic or validation if needed
+            UserDto addedUserDto = objectMapper.convertValue(responseEntity.getBody(), UserDto.class);
             return ResponseEntity.status(HttpStatus.CREATED).body(addedUserDto);
         } else {
             return ResponseEntity.status(responseEntity.getStatusCode()).body(responseEntity.getBody());

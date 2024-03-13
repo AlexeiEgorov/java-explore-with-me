@@ -1,7 +1,7 @@
 package ru.practicum.category.model;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.category.dto.ResponseCategoryDto;
+import ru.practicum.dto.ResponseCategoryDto;
 import ru.practicum.dto.CategoryDto;
 import ru.practicum.dto.EventCategoryDto;
 

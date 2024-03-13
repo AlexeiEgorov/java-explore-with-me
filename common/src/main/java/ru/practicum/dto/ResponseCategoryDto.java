@@ -1,4 +1,4 @@
-package ru.practicum.category.dto;
+package ru.practicum.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

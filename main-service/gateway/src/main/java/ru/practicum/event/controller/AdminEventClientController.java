@@ -61,7 +61,7 @@ public class AdminEventClientController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> reviewEvent(@PathVariable Long id,
+    public ResponseEntity<?> reviewEvent(@PathVariable Long id,
                                               @RequestBody @Valid EventPatchDto eventPatchDto) {
         if (id < 1) {
             throw new ConstraintViolationException("Id should be positive");
@@ -70,7 +70,13 @@ public class AdminEventClientController {
             @StartAfterTwoHoursFromNow
             LocalDateTime time = LocalDateTime.parse(eventPatchDto.getEventDate(), FORMATTER);
         }
-        return client.reviewEvent(id, eventPatchDto);
+        ResponseEntity<Object> responseEntity = client.reviewEvent(id, eventPatchDto);
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            EventResponseDto eventDto = objectMapper.convertValue(responseEntity.getBody(), EventResponseDto.class);
+            return ResponseEntity.status(HttpStatus.OK).body(eventDto);
+        } else {
+            return ResponseEntity.status(responseEntity.getStatusCode()).body(responseEntity.getBody());
+        }
     }
 
 }

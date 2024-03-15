@@ -22,22 +22,11 @@ public class ErrorHandler {
     private static final String ENTITY_NOT_FOUND = "%s with id=%d was not found";
     private static final String NOT_FOUND = "NOT_FOUND";
     private static final String REQ_OBJ_NOT_FOUND = "The required object was not found.";
-    private static final String INTERNAL_SERV_ERROR = "Internal server error.";
-    private static final String INCORR_MADE_REQ = "Incorrectly made request";
-    private static final String INTEGRITY_CONS_VIOL = "Integrity constraint has been violated.";
 
-    @ExceptionHandler
+    @ExceptionHandler({NotAllowedActionException.class, IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse onNotAllowedActionException(NotAllowedActionException e) {
-        log.debug("Получен статус 400 Bad request (NotAllowedActionException); value:{}", e.getValue());
-        return new ErrorResponse(BAD_REQUEST, INCORR_MADE_REQ, e.getMessage(),
-                LocalDateTime.now().format(FORMATTER));
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse onIllegalArgumentException(IllegalArgumentException e) {
-        log.debug("Получен статус 400 Bad request (IllegalArgumentException): {}", e.getMessage());
+    public ErrorResponse onNotAllowedActionException(RuntimeException e) {
+        log.debug("Получен статус 400 Bad request; value:{}", e.getMessage(), e);
         return new ErrorResponse(BAD_REQUEST, INCORR_MADE_REQ, e.getMessage(),
                 LocalDateTime.now().format(FORMATTER));
     }
@@ -45,24 +34,17 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse onEntityNotFoundException(EntityNotFoundException e) {
-        log.debug("Получен статус 404 Not found; entityClass:{};value:{}", e.getEntityClass(), e.getValue(), e);
+        log.debug("Получен статус 404 Not found; value:{}", e.getMessage(), e);
         return new ErrorResponse(NOT_FOUND, REQ_OBJ_NOT_FOUND,
                 String.format(ENTITY_NOT_FOUND, e.getEntityClass(), e.getValue()),
                 LocalDateTime.now().format(FORMATTER));
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({ConstraintViolationException.class, DataIntegrityViolationException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse onConstraintValidationException(ConstraintViolationException e) {
-        log.debug("Получен статус 409 Conflict (ru.practicum.ConstraintViolationException); value:{}", e.getValue());
-        return new ErrorResponse(FORBIDDEN, CONS_VIOL, e.getMessage(), LocalDateTime.now().format(FORMATTER));
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse onDataIntegrityViolationException(DataIntegrityViolationException e) {
-        log.debug("Получен статус 409 Conflict (); причина: {}", e.toString());
-        return new ErrorResponse(CONFLICT, INTEGRITY_CONS_VIOL, e.getMessage(), LocalDateTime.now().format(FORMATTER));
+    public ErrorResponse onDataIntegrityViolationException(RuntimeException e) {
+        log.debug("Получен статус 409 Conflict; {}", e.getMessage(), e);
+        return new ErrorResponse(CONFLICT, CONS_VIOL, e.getMessage(), LocalDateTime.now().format(FORMATTER));
     }
 
     @ExceptionHandler

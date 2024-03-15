@@ -3,6 +3,8 @@ package ru.practicum.event.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,6 +29,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ru.practicum.Constants.DATE_TIME_FORMAT;
 import static ru.practicum.Constants.FORMATTER;
 
 @Controller
@@ -38,14 +41,16 @@ public class PublicEventClientController {
     private final StatsClient statsClient;
     private final ObjectMapper objectMapper;
     private final ViewsLoader viewsLoader;
+    @Value("${service.name}")
+    private String serviceName;
 
     @GetMapping
     public ResponseEntity<Object> searchEvents(
             @RequestParam(required = false) String text,
             @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) Boolean paid,
-            @RequestParam(required = false) String rangeStart,
-            @RequestParam(required = false) String rangeEnd,
+            @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime rangeStart,
+            @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime rangeEnd,
             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
             @RequestParam(defaultValue = "EVENT_DATE") SortType sort,
             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
@@ -53,16 +58,14 @@ public class PublicEventClientController {
             HttpServletRequest request
     ) {
         if (rangeStart != null && rangeEnd != null) {
-            LocalDateTime start = LocalDateTime.parse(rangeStart, FORMATTER);
-            LocalDateTime end = LocalDateTime.parse(rangeEnd, FORMATTER);
-            if (end.isBefore(start)) {
+            if (rangeEnd.isBefore(rangeStart)) {
                 throw new NotAllowedActionException("End time cannot go before start time");
             }
         }
         String requestTime = LocalDateTime.now().format(FORMATTER);
         statsClient.addEndpointHitStat(
                 new EndpointHitStatDto(
-                        "ewm-main-service",
+                        serviceName,
                         request.getRequestURI(),
                         request.getRemoteAddr(),
                         requestTime));
@@ -86,14 +89,15 @@ public class PublicEventClientController {
 
         statsClient.addEndpointHitStat(
                 new EndpointHitStatDto(
-                        "ewm-main-service",
+                        serviceName,
                         request.getRequestURI(),
                         request.getRemoteAddr(),
                         requestTime));
         ResponseEntity<Object> resp = client.getEventForVisitor(id);
         if (resp.getStatusCode() == HttpStatus.OK) {
             EventResponseDto eventDto = objectMapper.convertValue(resp.getBody(), EventResponseDto.class);
-            return ResponseEntity.ok(viewsLoader.loadViewsForEventDtos(List.of(eventDto)).get(0));
+            viewsLoader.loadViewsForEventDtos(List.of(eventDto));
+            return ResponseEntity.ok(eventDto);
         }
         return resp;
     }

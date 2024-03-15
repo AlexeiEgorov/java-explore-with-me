@@ -1,15 +1,16 @@
 package ru.practicum.event.service;
 
 import ru.practicum.category.model.Category;
+import ru.practicum.dto.EventDto;
+import ru.practicum.dto.EventPatchDto;
 import ru.practicum.dto.EventRequestsConfirmationDto;
-import ru.practicum.event.dto.EventDto;
-import ru.practicum.event.dto.EventPatchDto;
 import ru.practicum.event.dto.EventRequestsConfirmationResultDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.eventrequest.model.EventRequest;
 import ru.practicum.model.EventStatus;
 import ru.practicum.model.SortType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -23,8 +24,8 @@ public interface EventService {
             List<Long> users,
             List<EventStatus> states,
             List<Long> categories,
-            String rangeStart,
-            String rangeEnd,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
             Integer from,
             Integer size
     );
@@ -43,13 +44,13 @@ public interface EventService {
                                                                    EventRequestsConfirmationDto
                                                                            eventRequestsConfirmationDto);
 
-    Event reviewEvent(Long id, EventPatchDto eventPatchDto);
+    Event reviewEvent(Long id, ru.practicum.dto.EventPatchDto eventPatchDto);
 
-    List<Event> searchEventsForVisitor(String text, List<Long> categories, Boolean paid, String rangeStart,
-                                       String rangeEnd, Boolean onlyAvailable, SortType sort, Integer from,
+    List<Event> searchEventsForVisitor(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
+                                       LocalDateTime rangeEnd, Boolean onlyAvailable, SortType sort, Integer from,
                                        Integer size);
 
     Event getEventForVisitor(Long id);
 
-    List<Event> findAllByIds(Set<Long> sets);
+    Set<Event> findAllByIds(Set<Long> sets);
 }

@@ -9,14 +9,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.client.BaseClient;
 import ru.practicum.dto.EventRequestsConfirmationDto;
-import ru.practicum.event.model.EventDto;
-import ru.practicum.event.model.EventPatchDto;
+import ru.practicum.dto.EventDto;
+import ru.practicum.dto.EventPatchDto;
 import ru.practicum.model.EventStatus;
 import ru.practicum.model.SortType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static ru.practicum.Constants.FORMATTER;
 
 @Service
 public class EventClient extends BaseClient {
@@ -69,8 +72,8 @@ public class EventClient extends BaseClient {
             List<Long> users,
             List<EventStatus> states,
             List<Long> categories,
-            String rangeStart,
-            String rangeEnd,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
             Integer from,
             Integer size) {
         StringBuilder uriBuilder = new StringBuilder(ADMIN_API_PREFIX);
@@ -90,10 +93,10 @@ public class EventClient extends BaseClient {
                     .collect(Collectors.joining(",")));
         }
         if (rangeStart != null) {
-            uriBuilder.append("&rangeStart=").append(rangeStart);
+            uriBuilder.append("&rangeStart=").append(rangeStart.format(FORMATTER));
         }
         if (rangeEnd != null) {
-            uriBuilder.append("&rangeEnd=").append(rangeEnd);
+            uriBuilder.append("&rangeEnd=").append(rangeEnd.format(FORMATTER));
         }
 
         return get(uriBuilder.toString());
@@ -107,8 +110,8 @@ public class EventClient extends BaseClient {
             String text,
             List<Long> categories,
             Boolean paid,
-            String rangeStart,
-            String rangeEnd,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
             Boolean onlyAvailable,
             SortType sort,
             Integer from,
@@ -128,10 +131,10 @@ public class EventClient extends BaseClient {
             uriBuilder.append("&paid=").append(paid);
         }
         if (rangeStart != null) {
-            uriBuilder.append("&rangeStart=").append(rangeStart);
+            uriBuilder.append("&rangeStart=").append(rangeStart.format(FORMATTER));
         }
         if (rangeEnd != null) {
-            uriBuilder.append("&rangeEnd=").append(rangeEnd);
+            uriBuilder.append("&rangeEnd=").append(rangeEnd.format(FORMATTER));
         }
         if (onlyAvailable != null) {
             uriBuilder.append("&onlyAvailable=").append(onlyAvailable);

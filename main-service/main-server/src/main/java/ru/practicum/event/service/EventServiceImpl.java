@@ -1,20 +1,20 @@
 package ru.practicum.event.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ConfirmedRequestsLoader;
 import ru.practicum.category.CategoryRepository;
 import ru.practicum.category.model.Category;
+import ru.practicum.dto.EventDto;
+import ru.practicum.dto.EventPatchDto;
 import ru.practicum.dto.EventRequestStatus;
 import ru.practicum.dto.EventRequestsConfirmationDto;
 import ru.practicum.event.EventRepository;
-import ru.practicum.event.dto.EventDto;
-import ru.practicum.event.dto.EventPatchDto;
 import ru.practicum.event.dto.EventRequestsConfirmationResultDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventMapper;
@@ -25,7 +25,6 @@ import ru.practicum.eventrequest.model.EventRequest;
 import ru.practicum.eventrequest.model.EventRequestMapper;
 import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.model.*;
-import ru.practicum.user.UserRepository;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
@@ -34,8 +33,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ru.practicum.Constants.FORMATTER;
-import static ru.practicum.LocalConstants.*;
+import static ru.practicum.LocalConstants.CATEGORY;
+import static ru.practicum.LocalConstants.EVENT;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,8 +42,8 @@ import static ru.practicum.LocalConstants.*;
 public class EventServiceImpl implements EventService {
     private final EventRepository repository;
     private final CategoryRepository categoryRepository;
-    private final UserRepository userRepository;
     private final EventRequestRepository eventRequestRepository;
+    private final ConfirmedRequestsLoader confirmedRequestsLoader;
     private static final String NO_EVENTS_CHANGING_PERMISSION = "You have not admin permission to change published/" +
             "rejected event.";
     private static final String PUBLISHED_E_STAT_CANNOT_BE_CHANGED = "Status of a published event cannot be changed.";
@@ -56,8 +55,8 @@ public class EventServiceImpl implements EventService {
             List<Long> users,
             List<EventStatus> states,
             List<Long> categories,
-            String rangeStart,
-            String rangeEnd,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
             Integer from,
             Integer size
     ) {
@@ -67,28 +66,19 @@ public class EventServiceImpl implements EventService {
             specification = specification.and(EventSpecifications.hasUsers(users));
         }
         if (states != null && !states.isEmpty()) {
-            System.out.println(states);
             specification = specification.and(EventSpecifications.hasStates(states));
         }
         if (categories != null && !categories.isEmpty()) {
             specification = specification.and(EventSpecifications.hasCategories(categories));
         }
-        //if (rangeStart != null && rangeEnd != null) {
-        //    LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
-        //    LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
-        //    specification = specification.and(EventSpecifications.hasEventDateBetween(startDateTime, endDateTime));
         if (rangeStart != null) {
-            LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
-            specification = specification.and(EventSpecifications.hasEventDateAfter(startDateTime));
+            specification = specification.and(EventSpecifications.hasEventDateAfter(rangeStart));
         }
         if (rangeEnd != null) {
-            LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
-            specification = specification.and(EventSpecifications.hasEventDateBefore(endDateTime));
+            specification = specification.and(EventSpecifications.hasEventDateBefore(rangeEnd));
         }
-        //LocalDateTime startTime = LocalDateTime.parse(rangeStart, FORMATTER);
-        //LocalDateTime endTime = LocalDateTime.parse(rangeEnd, FORMATTER);
         PageRequest pageRequest = PageRequest.of(from, size);
-        //Page<Event> eventsPage = repository.findAll(specification, pageable);
+
         return repository.findAll(specification, pageRequest).getContent();
     }
 
@@ -136,19 +126,20 @@ public class EventServiceImpl implements EventService {
                                                                           EventRequestsConfirmationDto
                                                                                   confirmationDto) {
         Event event = get(id);
-        if (event.getConfirmedRequests().equals(event.getParticipantLimit())
-                && !event.getParticipantLimit().equals(0)) {
+        Long confirmedReqs = confirmedRequestsLoader.getConfirmedCountForEvent(event);
+        if (confirmedReqs.equals(event.getParticipantLimit())
+                && !event.getParticipantLimit().equals(0L)) {
             throw new ConstraintViolationException("The participant limit has been reached.");
         }
         EventRequestStatus eventStatusToAssign = EventRequestStatus.valueOf(confirmationDto.getStatus().name());
         List<EventRequest> selectedRequests =
                 eventRequestRepository.findAllById(confirmationDto.getRequestIds());
-        int confirmedRequestsAfterAdding = 0;
+        long confirmedRequestsAfterAdding = 0;
         if (eventStatusToAssign.equals(EventRequestStatus.CONFIRMED)) {
-            confirmedRequestsAfterAdding = event.getConfirmedRequests() + selectedRequests.size();
+            confirmedRequestsAfterAdding = confirmedReqs + selectedRequests.size();
         }
 
-        if (event.getParticipantLimit().equals(0)
+        if (event.getParticipantLimit().equals(0L)
                 || eventStatusToAssign.equals(EventRequestStatus.REJECTED)
                 || (confirmedRequestsAfterAdding <= event.getParticipantLimit())) {
             List<Long> requestsIdsToUpdate = updateRequestsStatusesAndGetIds(selectedRequests, eventStatusToAssign);
@@ -160,7 +151,6 @@ public class EventServiceImpl implements EventService {
             if (eventStatusToAssign.equals(EventRequestStatus.CONFIRMED)) {
                 conformationResultDto.setConfirmedRequests(selectedRequestsDtos);
                 conformationResultDto.setRejectedRequests(List.of());
-                repository.updConfirmedRequests(confirmedRequestsAfterAdding, id);
             } else {
                 conformationResultDto.setRejectedRequests(selectedRequestsDtos);
                 conformationResultDto.setConfirmedRequests(List.of());
@@ -170,7 +160,7 @@ public class EventServiceImpl implements EventService {
             return conformationResultDto;
 
         } else {
-            int requestsLeftToAdd = event.getParticipantLimit() - event.getConfirmedRequests();
+            int requestsLeftToAdd = (int) (event.getParticipantLimit() - confirmedReqs);
             List<EventRequest> confirmedRequests = selectedRequests.subList(0, requestsLeftToAdd);
             List<EventRequest> rejectedRequests = selectedRequests.subList(requestsLeftToAdd, selectedRequests.size());
             List<Long> confirmedReqIds = updateRequestsStatusesAndGetIds(confirmedRequests,
@@ -183,7 +173,6 @@ public class EventServiceImpl implements EventService {
                     .collect(Collectors.toList()));
             conformationResultDto.setRejectedRequests(rejectedRequests.stream().map(EventRequestMapper::toResponseDto)
                     .collect(Collectors.toList()));
-            repository.updConfirmedRequests(event.getParticipantLimit(), id);
             eventRequestRepository.updateStatusOfEventRequestsByIds(confirmedReqIds, EventRequestStatus.CONFIRMED);
             eventRequestRepository.updateStatusOfEventRequestsByIds(rejectedReqIds, EventRequestStatus.REJECTED);
 
@@ -193,7 +182,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public Event reviewEvent(Long id, EventPatchDto eventPatchDto) {
+    public Event reviewEvent(Long id, ru.practicum.dto.EventPatchDto eventPatchDto) {
         Event event = get(id);
         if (eventPatchDto.getStateAction() != null) {
             if (event.getState().equals(EventStatus.PENDING)) {
@@ -218,8 +207,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> searchEventsForVisitor(String text, List<Long> categories, Boolean paid, String rangeStart,
-                                              String rangeEnd, Boolean onlyAvailable, SortType sort, Integer from,
+    public List<Event> searchEventsForVisitor(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
+                                              LocalDateTime rangeEnd, Boolean onlyAvailable, SortType sort, Integer from,
                                               Integer size) {
         Specification<Event> specification = Specification.where(null);
 
@@ -232,27 +221,19 @@ public class EventServiceImpl implements EventService {
         if (paid != null) {
             specification = specification.and(EventSpecifications.isPaid(paid));
         }
-        //if (rangeStart != null && rangeEnd != null) {
-        //    LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
-        //    LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
-        //    specification = specification.and(EventSpecifications.hasEventDateBetween(startDateTime, endDateTime));
-        //} else
         if (rangeStart != null) {
-            LocalDateTime startDateTime = LocalDateTime.parse(rangeStart, FORMATTER);
-            specification = specification.and(EventSpecifications.hasEventDateAfter(startDateTime));
+            specification = specification.and(EventSpecifications.hasEventDateAfter(rangeStart));
         }
         if (rangeEnd != null) {
-            LocalDateTime endDateTime = LocalDateTime.parse(rangeEnd, FORMATTER);
-            specification = specification.and(EventSpecifications.hasEventDateBefore(endDateTime));
+            specification = specification.and(EventSpecifications.hasEventDateBefore(rangeEnd));
         }
         if (onlyAvailable != null && onlyAvailable) {
             specification = specification.and(EventSpecifications.isAvailable());
         }
         Sort eventSort = Sort.by(sort.equals(SortType.VIEWS) ? "views" : "eventDate");
         Pageable pageable = PageRequest.of(from, size, eventSort);
-        Page<Event> eventsPage = repository.findAll(specification, pageable);
 
-        return eventsPage.getContent();
+        return repository.findAll(specification, pageable).getContent();
     }
 
     @Override
@@ -265,24 +246,24 @@ public class EventServiceImpl implements EventService {
     }
 
     private void patchEvent(Event event, EventPatchDto eventPatchDto) {
-        if (eventPatchDto.getAnnotation() != null) {
+        if (eventPatchDto.getAnnotation() != null && !eventPatchDto.getAnnotation().isBlank()) {
             event.setAnnotation(eventPatchDto.getAnnotation());
         }
         if (eventPatchDto.getCategory() != null) {
             event.setCategory(getCategory(eventPatchDto.getCategory()));
         }
-        if (eventPatchDto.getDescription() != null) {
+        if (eventPatchDto.getDescription() != null && !eventPatchDto.getDescription().isBlank()) {
             event.setDescription(eventPatchDto.getDescription());
         }
         if (eventPatchDto.getEventDate() != null) {
-            LocalDateTime time = LocalDateTime.parse(eventPatchDto.getEventDate(), FORMATTER);
+            LocalDateTime time = eventPatchDto.getEventDate();
             if (!time.isAfter(LocalDateTime.now())) {
                 throw new NotAllowedActionException("Event cannot start in the past");
             }
             event.setEventDate(time);
         }
         if (eventPatchDto.getLocation() != null) {
-            event.setLocation(eventPatchDto.getLocation());
+            event.setLocation(EventMapper.toLocation(eventPatchDto.getLocation()));
         }
         if (eventPatchDto.getPaid() != null) {
             event.setPaid(eventPatchDto.getPaid());
@@ -293,14 +274,14 @@ public class EventServiceImpl implements EventService {
         if (eventPatchDto.getRequestModeration() != null) {
             event.setRequestModeration(eventPatchDto.getRequestModeration());
         }
-        if (eventPatchDto.getTitle() != null) {
+        if (eventPatchDto.getTitle() != null && !eventPatchDto.getTitle().isBlank()) {
             event.setTitle(eventPatchDto.getTitle());
         }
     }
 
     @Override
     @Transactional
-    public Event patch(Long userId, Long id, EventPatchDto eventPatchDto) {
+    public Event patch(Long userId, Long id, ru.practicum.dto.EventPatchDto eventPatchDto) {
         Event event = get(id);
         if (event.getState().equals(EventStatus.PUBLISHED)) {
             throw new ConstraintViolationException(PUBLISHED_E_STAT_CANNOT_BE_CHANGED);
@@ -336,7 +317,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> findAllByIds(Set<Long> ids) {
-        return repository.findAllById(ids);
+    public Set<Event> findAllByIds(Set<Long> ids) {
+        return repository.findAllByIdIn(ids);
     }
 }

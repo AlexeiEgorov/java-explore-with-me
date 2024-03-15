@@ -10,4 +10,5 @@ public class Constants {
     public static final String INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
     public static final String FORBIDDEN = "FORBIDDEN";
     public static final String CONS_VIOL = "For the requested operation the conditions are not met.";
+    public static final String INCORR_MADE_REQ = "Incorrectly made request";
 }

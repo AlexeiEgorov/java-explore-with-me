@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -13,5 +13,5 @@ public class CompilationRespDto {
     private final Long id;
     private final String title;
     private final Boolean pinned;
-    private List<EventPreviewResponseDto> events;
+    private Set<EventPreviewResponseDto> events;
 }

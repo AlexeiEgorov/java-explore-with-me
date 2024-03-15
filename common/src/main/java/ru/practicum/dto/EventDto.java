@@ -1,19 +1,24 @@
-package ru.practicum.event.model;
+package ru.practicum.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
-import ru.practicum.model.Location;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
+
+import static ru.practicum.Constants.DATE_TIME_FORMAT;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class EventDto {
     @NotBlank
     @Size(min = 20, max = 2000)
@@ -24,10 +29,11 @@ public class EventDto {
     @Size(min = 20, max = 7000)
     private String description;
     @NotNull
-    @DateTimeFormat
-    private String eventDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+    private LocalDateTime eventDate;
     @NotNull
-    private Location location;
+    @Valid
+    private LocationDto location;
     private Boolean paid;
     @PositiveOrZero
     private Integer participantLimit;

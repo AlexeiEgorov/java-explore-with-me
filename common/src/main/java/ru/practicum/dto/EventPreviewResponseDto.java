@@ -12,7 +12,7 @@ import lombok.Setter;
 public class EventPreviewResponseDto implements EventRespDto {
     private final String annotation;
     private EventCategoryDto category;
-    private final Integer confirmedRequests;
+    private Long confirmedRequests;
     private final String eventDate;
     private final Long id;
     private Initiator initiator;

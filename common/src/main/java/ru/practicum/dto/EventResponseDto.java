@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.model.Location;
 import ru.practicum.model.EventStatus;
 
 @Getter
@@ -14,15 +13,15 @@ import ru.practicum.model.EventStatus;
 public class EventResponseDto implements EventRespDto {
     private final String annotation;
     private EventCategoryDto category;
-    private final Integer confirmedRequests;
+    private Long confirmedRequests;
     private final String createdOn;
     private final String description;
     private final String eventDate;
     private final Long id;
     private Initiator initiator;
-    private final Location location;
+    private final LocationDto location;
     private final Boolean paid;
-    private final Integer participantLimit;
+    private final Long participantLimit;
     private final String publishedOn;
     private final Boolean requestModeration;
     private final EventStatus state;

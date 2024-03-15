@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.CategoryRepository;
 import ru.practicum.category.model.Category;
 import ru.practicum.dto.CategoryDto;
-import ru.practicum.dto.EventCategoryDto;
 import ru.practicum.exception.EntityNotFoundException;
 
 import java.util.List;
@@ -54,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<EventCategoryDto> findCategoryDtosByIds(Set<Long> ids) {
-        return repository.findCategoryDtosByIds(ids);
+    public List<Category> findCategoriesByIds(Set<Long> ids) {
+        return repository.findAllByIdIn(ids);
     }
 }

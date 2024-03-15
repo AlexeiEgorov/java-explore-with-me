@@ -24,8 +24,6 @@ public class AdminUserClientController {
     private final UserClient client;
     private final ObjectMapper objectMapper;
 
-    //
-
     @PostMapping
     public ResponseEntity<?> add(@RequestBody @Valid UserDto userDto) {
         ResponseEntity<Object> responseEntity = client.add(userDto);
@@ -46,7 +44,7 @@ public class AdminUserClientController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@PathVariable @Positive Long id) {
+    public ResponseEntity<Object> delete(@PathVariable Long id) {
         if (id < 1) {
             throw new ConstraintViolationException("Id should be positive");
         }

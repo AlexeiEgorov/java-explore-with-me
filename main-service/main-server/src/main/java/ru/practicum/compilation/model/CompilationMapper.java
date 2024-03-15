@@ -4,8 +4,8 @@ import ru.practicum.dto.CompilationDto;
 import ru.practicum.dto.CompilationRespDto;
 import ru.practicum.event.model.Event;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CompilationMapper {
@@ -15,15 +15,15 @@ public class CompilationMapper {
         if (dto.getEvents() != null) {
             compilation.setEvents(dto.getEvents().stream()
                     .map(Event::new)
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
         } else {
-            compilation.setEvents(List.of());
+            compilation.setEvents(Set.of());
         }
         return compilation;
     }
 
     public static CompilationRespDto toDto(Compilation compilation) {
         return new CompilationRespDto(compilation.getId(), compilation.getTitle(), compilation.getPinned(),
-                new ArrayList<>());
+                new LinkedHashSet<>());
     }
 }

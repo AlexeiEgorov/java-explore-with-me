@@ -2,6 +2,7 @@ package ru.practicum.compilation.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ConfirmedRequestsLoader;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.model.CompilationMapper;
 import ru.practicum.compilation.service.CompilationService;
@@ -11,10 +12,7 @@ import ru.practicum.event.controller.InitiatorsCategoriesLoader;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.service.EventService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @AllArgsConstructor
@@ -23,6 +21,7 @@ public class PublicCompilationServerController {
     private final CompilationService service;
     private final EventService eventService;
     private final InitiatorsCategoriesLoader initiatorsCategoriesLoader;
+    private final ConfirmedRequestsLoader confirmedRequestsLoader;
 
     @GetMapping
     public List<CompilationRespDto> getCompilations(
@@ -37,8 +36,9 @@ public class PublicCompilationServerController {
                 eventDtos.put(event.getId(), null);
             }
         }
-        List<Event> events = eventService.findAllByIds(eventDtos.keySet());
-        for (EventPreviewResponseDto dto : initiatorsCategoriesLoader.loadPreviewResponseDtos(events)) {
+        Set<EventPreviewResponseDto> events = initiatorsCategoriesLoader.loadPreviewResponseDtos(
+                eventService.findAllByIds(eventDtos.keySet()));
+        for (EventPreviewResponseDto dto : confirmedRequestsLoader.loadForEventDtos(events)) {
             eventDtos.put(dto.getId(), dto);
         }
         List<CompilationRespDto> resp = new ArrayList<>();
@@ -57,6 +57,7 @@ public class PublicCompilationServerController {
         Compilation comp = service.getCompilation(compId);
         CompilationRespDto resp = CompilationMapper.toDto(comp);
         resp.setEvents(initiatorsCategoriesLoader.loadPreviewResponseDtos(comp.getEvents()));
+        confirmedRequestsLoader.loadForEventDtos(resp.getEvents());
         return resp;
     }
 

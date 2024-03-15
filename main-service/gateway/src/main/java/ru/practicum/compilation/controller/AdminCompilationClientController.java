@@ -14,8 +14,6 @@ import ru.practicum.ViewsLoader;
 import ru.practicum.model.ConstraintViolationException;
 import ru.practicum.model.Marker;
 
-import javax.validation.constraints.Positive;
-
 @Controller
 @AllArgsConstructor
 @RequestMapping(path = "/admin/compilations")
@@ -44,7 +42,7 @@ public class AdminCompilationClientController {
     }
 
     @PatchMapping("/{compId}")
-    public ResponseEntity<Object> patch(@PathVariable @Positive Long compId,
+    public ResponseEntity<Object> patch(@PathVariable Long compId,
                              @RequestBody @Validated(Marker.Update.class) CompilationDto compilationDto) {
         if (compId < 1) {
             throw new ConstraintViolationException("Id should be positive");

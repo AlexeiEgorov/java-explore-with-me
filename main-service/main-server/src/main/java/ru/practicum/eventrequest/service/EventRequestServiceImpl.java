@@ -4,19 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.EventRequestStatus;
-import ru.practicum.event.model.Event;
 import ru.practicum.event.EventRepository;
+import ru.practicum.event.model.Event;
 import ru.practicum.eventrequest.EventRequestRepository;
+import ru.practicum.eventrequest.model.ConfirmedRequests;
 import ru.practicum.eventrequest.model.EventRequest;
+import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.model.ConstraintViolationException;
 import ru.practicum.model.EventStatus;
-import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.model.NotAllowedActionException;
 import ru.practicum.user.UserRepository;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static ru.practicum.LocalConstants.*;
 
@@ -38,7 +40,9 @@ public class EventRequestServiceImpl implements EventRequestService {
         if (!event.getState().equals(EventStatus.PUBLISHED)) {
             throw new ConstraintViolationException("The event's not yet accepted by the administrators.");
         }
-        if (event.getConfirmedRequests().equals(event.getParticipantLimit()) && event.getParticipantLimit() != 0) {
+        if (repository.countConfirmedRequestsForEvents(Set.of(event.getId())).get(0).getCount()
+                .equals(event.getParticipantLimit())
+                && event.getParticipantLimit() != 0) {
             throw new ConstraintViolationException("The participant limit is reached.");
         }
         EventRequest previousRequest = repository.findByEventIdAndRequesterId(eventId, userId);
@@ -46,9 +50,8 @@ public class EventRequestServiceImpl implements EventRequestService {
             throw new ConstraintViolationException("You've already made a request for this event.");
         }
         EventRequestStatus state;
-        if (event.getRequestModeration().equals(false) || event.getParticipantLimit().equals(0)) {
+        if (event.getRequestModeration().equals(false) || event.getParticipantLimit().equals(0L)) {
             state = EventRequestStatus.CONFIRMED;
-            eventRepository.incrementConfirmedRequests(eventId);
         } else {
             state = EventRequestStatus.PENDING;
         }
@@ -80,12 +83,12 @@ public class EventRequestServiceImpl implements EventRequestService {
     }
 
     @Override
-    public User getUser(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(USER, id));
+    public Event getEvent(Long id) {
+        return eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(EVENT, id));
     }
 
     @Override
-    public Event getEvent(Long id) {
-        return eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(EVENT, id));
+    public List<ConfirmedRequests> getConfirmedRequestsForEvents(Set<Long> eventsIds) {
+        return repository.countConfirmedRequestsForEvents(eventsIds);
     }
 }

@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.model.Category;
 import ru.practicum.dto.CategoryDto;
-import ru.practicum.dto.EventCategoryDto;
 
 import java.util.List;
 import java.util.Set;
@@ -23,5 +22,5 @@ public interface CategoryService {
 
     Category get(Long id);
 
-    List<EventCategoryDto> findCategoryDtosByIds(Set<Long> ids);
+    List<Category> findCategoriesByIds(Set<Long> ids);
 }

@@ -12,9 +12,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.dto.EndpointHitStatDto;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static ru.practicum.Constants.FORMATTER;
 
 @Service
 public class StatsClient {
@@ -30,11 +35,13 @@ public class StatsClient {
                         .build();
     }
 
-    public ResponseEntity<Object> getStats(String start, String end, List<String> uris,
-                                              Boolean unique) {
+    public ResponseEntity<Object> getStats(LocalDateTime start, LocalDateTime end, List<String> uris,
+                                           Boolean unique) {
+        String encodedStartTimeStr = URLEncoder.encode(start.format(FORMATTER), StandardCharsets.UTF_8);
+        String encodedEndTimeStr = URLEncoder.encode(end.format(FORMATTER), StandardCharsets.UTF_8);
         Map<String, Object> parameters = new HashMap<>(Map.of(
-                "start", start,
-                "end", end,
+                "start", encodedStartTimeStr,
+                "end", encodedEndTimeStr,
                 "unique", unique
         ));
         if (uris == null) {

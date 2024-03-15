@@ -19,8 +19,9 @@ import ru.practicum.model.ConstraintViolationException;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @AllArgsConstructor
@@ -40,7 +41,7 @@ public class PublicCompilationClientController {
         ResponseEntity<Object> resp = client.getCompilations(from, size, pinned);
         if (resp.getStatusCode() == HttpStatus.OK) {
             List<CompilationRespDto> dtos = objectMapper.convertValue(resp.getBody(), new TypeReference<>() {});
-            List<EventPreviewResponseDto> eventDtos = new ArrayList<>();
+            Set<EventPreviewResponseDto> eventDtos = new HashSet<>();
             for (CompilationRespDto compilationRespDto : dtos) {
                 eventDtos.addAll(compilationRespDto.getEvents());
             }

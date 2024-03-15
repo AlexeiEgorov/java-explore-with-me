@@ -1,35 +1,36 @@
-package ru.practicum.event.model;
+package ru.practicum.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import ru.practicum.model.Location;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
 import ru.practicum.model.StateAction;
 
-import javax.validation.constraints.Pattern;
+import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
+
+import static ru.practicum.Constants.DATE_TIME_FORMAT;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class EventPatchDto {
-    @Pattern(regexp = "^(?!\\s*$).+", message = "Field must not consist only of whitespace characters")
     @Size(min = 20, max = 2000)
     private String annotation;
     private Long category;
     @Size(min = 20, max = 7000)
     private String description;
-    private String eventDate;
-    private Location location;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
+    private LocalDateTime eventDate;
+    @Valid
+    private LocationDto location;
     private Boolean paid;
     @PositiveOrZero
-    private Integer participantLimit;
+    private Long participantLimit;
     private Boolean requestModeration;
     private StateAction stateAction;
-    @Pattern(regexp = "^(?!\\s*$).+", message = "Field must not consist only of whitespace characters")
     @Size(min = 3, max = 120)
     private String title;
 }

@@ -11,6 +11,7 @@ import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.model.Event;
 import ru.practicum.exception.EntityNotFoundException;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,7 @@ public class CompilationServiceImpl implements CompilationService {
         if (dto.getEvents() != null) {
             compilation.setEvents(dto.getEvents().stream()
                     .map(Event::new)
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
         }
         if (dto.getPinned() != null) {
             compilation.setPinned(dto.getPinned());

@@ -3,7 +3,6 @@ package ru.practicum.event.model;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import ru.practicum.category.model.Category;
-import ru.practicum.model.Location;
 import ru.practicum.model.EventStatus;
 import ru.practicum.user.model.User;
 
@@ -26,8 +25,6 @@ public class Event {
     private String annotation;
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
-    @Column(name = "confirmed_requests")
-    private Integer confirmedRequests;
     @Column(name = "created_on")
     private LocalDateTime createdOn;
     private String description;
@@ -41,7 +38,7 @@ public class Event {
     private Boolean paid;
     @Column(name = "participant_limit")
     @ColumnDefault("0")
-    private Integer participantLimit;
+    private Long participantLimit;
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
     @Column(name = "request_moderation")

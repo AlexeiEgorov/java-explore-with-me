@@ -1,12 +1,11 @@
 package ru.practicum.event.model;
 
 import lombok.experimental.UtilityClass;
+import ru.practicum.dto.EventDto;
 import ru.practicum.dto.EventPreviewResponseDto;
 import ru.practicum.dto.EventResponseDto;
-import ru.practicum.event.dto.EventDto;
+import ru.practicum.dto.LocationDto;
 import ru.practicum.model.EventStatus;
-
-import java.time.LocalDateTime;
 
 import static ru.practicum.Constants.FORMATTER;
 
@@ -17,13 +16,13 @@ public class EventMapper {
         return new EventResponseDto(
                 event.getAnnotation(),
                 null,
-                event.getConfirmedRequests(),
+                0L,
                 event.getCreatedOn().format(FORMATTER),
                 event.getDescription(),
                 event.getEventDate().format(FORMATTER),
                 event.getId(),
                 null,
-                event.getLocation(),
+                toLocationDto(event.getLocation()),
                 event.getPaid(),
                 event.getParticipantLimit(),
                 publishedOn,
@@ -37,7 +36,7 @@ public class EventMapper {
         return new EventPreviewResponseDto(
                 event.getAnnotation(),
                 null,
-                event.getConfirmedRequests(),
+                0L,
                 event.getEventDate().format(FORMATTER),
                 event.getId(),
                 null,
@@ -48,18 +47,17 @@ public class EventMapper {
 
     public Event toEvent(EventDto eventDto) {
         Boolean paid = eventDto.getPaid() != null ? eventDto.getPaid() : false;
-        Integer participantLimit = eventDto.getParticipantLimit() != null ? eventDto.getParticipantLimit() : 0;
+        Long participantLimit = eventDto.getParticipantLimit() != null ? eventDto.getParticipantLimit() : 0L;
         Boolean requestModeration = eventDto.getRequestModeration() != null ? eventDto.getRequestModeration() : true;
         return new Event(
                 null,
                 eventDto.getAnnotation(),
                 null,
-                0,
                 null,
                 eventDto.getDescription(),
-                LocalDateTime.parse(eventDto.getEventDate(), FORMATTER),
+                eventDto.getEventDate(),
                 null,
-                eventDto.getLocation(),
+                toLocation(eventDto.getLocation()),
                 paid,
                 participantLimit,
                 null,
@@ -67,5 +65,13 @@ public class EventMapper {
                 EventStatus.PENDING,
                 eventDto.getTitle()
         );
+    }
+
+    public Location toLocation(LocationDto locationDto) {
+        return new Location(locationDto.getLat(), locationDto.getLon());
+    }
+
+    public LocationDto toLocationDto(Location location) {
+        return new LocationDto(location.getLat(), location.getLon());
     }
 }

@@ -3,11 +3,12 @@ package ru.practicum.event.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ConfirmedRequestsLoader;
 import ru.practicum.category.model.CategoryMapper;
+import ru.practicum.dto.EventDto;
+import ru.practicum.dto.EventPatchDto;
 import ru.practicum.dto.EventRequestsConfirmationDto;
 import ru.practicum.dto.EventResponseDto;
-import ru.practicum.event.dto.EventDto;
-import ru.practicum.event.dto.EventPatchDto;
 import ru.practicum.event.dto.EventRequestsConfirmationResultDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventMapper;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 public class UserEventServerController {
     private final EventService service;
     private final InitiatorsCategoriesLoader initiatorsCategoriesLoader;
-    //
+    private final ConfirmedRequestsLoader confirmedRequestsLoader;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,7 +43,8 @@ public class UserEventServerController {
                                                   @RequestParam(defaultValue = "0") Integer from,
                                                   @RequestParam(defaultValue = "10") Integer size) {
         List<Event> events = service.getUserEvents(userId, from, size);
-        return initiatorsCategoriesLoader.loadFullResponseDtos(events);
+        List<EventResponseDto> resp = initiatorsCategoriesLoader.loadFullResponseDtos(events);
+        return confirmedRequestsLoader.loadForEventDtos(resp);
     }
 
     @GetMapping("/{id}")
@@ -51,6 +53,7 @@ public class UserEventServerController {
         EventResponseDto resp = EventMapper.toResponseDto(event);
         resp.setCategory(CategoryMapper.toEventCategoryDto(event.getCategory()));
         resp.setInitiator(UserMapper.toInitiator(event.getInitiator()));
+        confirmedRequestsLoader.loadForEventDtos(List.of(resp));
         return resp;
     }
 
@@ -61,6 +64,7 @@ public class UserEventServerController {
         EventResponseDto resp = EventMapper.toResponseDto(event);
         resp.setCategory(CategoryMapper.toEventCategoryDto(event.getCategory()));
         resp.setInitiator(UserMapper.toInitiator(event.getInitiator()));
+        confirmedRequestsLoader.loadForEventDtos(List.of(resp));
         return resp;
     }
 

@@ -31,15 +31,10 @@ public class StatsController {
                                        @RequestParam @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime end,
                                        @RequestParam(required = false) List<String> uris,
                                        @RequestParam(defaultValue = "false") Boolean unique) {
-        try {
             if (end.isBefore(start)) {
                 throw new ConstraintViolationException("Start date cannot go before end date",
                         String.format("start: %s, end: %s", start, end));
             }
             return service.getStats(start, end, uris, unique);
-        } catch (Exception e) {
-            throw new ConstraintViolationException("Wrong time encoding",
-                    String.format("start: %s, end: %s", start, end));
-        }
     }
 }

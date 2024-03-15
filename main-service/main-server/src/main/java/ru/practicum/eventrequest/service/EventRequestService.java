@@ -3,7 +3,6 @@ package ru.practicum.eventrequest.service;
 import ru.practicum.event.model.Event;
 import ru.practicum.eventrequest.model.ConfirmedRequests;
 import ru.practicum.eventrequest.model.EventRequest;
-import ru.practicum.user.model.User;
 
 import java.util.List;
 import java.util.Set;

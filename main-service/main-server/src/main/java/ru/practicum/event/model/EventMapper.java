@@ -1,11 +1,10 @@
 package ru.practicum.event.model;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.dto.EventDto;
-import ru.practicum.dto.EventPreviewResponseDto;
-import ru.practicum.dto.EventResponseDto;
-import ru.practicum.dto.LocationDto;
+import ru.practicum.dto.*;
 import ru.practicum.model.EventStatus;
+
+import java.util.ArrayList;
 
 import static ru.practicum.Constants.FORMATTER;
 
@@ -30,6 +29,28 @@ public class EventMapper {
                 event.getState(),
                 event.getTitle(),
                 0L);
+    }
+
+    public EventFullResponseDto toFullResponseDto(Event event) {
+        String publishedOn = event.getPublishedOn() == null ? null : event.getPublishedOn().format(FORMATTER);
+        return new EventFullResponseDto(
+                event.getAnnotation(),
+                null,
+                0L,
+                event.getCreatedOn().format(FORMATTER),
+                event.getDescription(),
+                event.getEventDate().format(FORMATTER),
+                event.getId(),
+                null,
+                toLocationDto(event.getLocation()),
+                event.getPaid(),
+                event.getParticipantLimit(),
+                publishedOn,
+                event.getRequestModeration(),
+                event.getState(),
+                event.getTitle(),
+                0L,
+                new ArrayList<>());
     }
 
     public EventPreviewResponseDto toPreviewDto(Event event) {

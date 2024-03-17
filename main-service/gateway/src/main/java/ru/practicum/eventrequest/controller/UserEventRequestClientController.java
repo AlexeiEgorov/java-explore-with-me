@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.eventrequest.EventRequestClient;
 import ru.practicum.model.ConstraintViolationException;
 
+import static ru.practicum.Constants.POSITIVE_ID_CONS;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping(path = "/users/{userId}/requests")
@@ -16,7 +18,7 @@ public class UserEventRequestClientController {
     @PostMapping
     public ResponseEntity<Object> add(@PathVariable Long userId, @RequestParam Long eventId) {
         if (eventId < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         return client.add(userId, eventId);
     }
@@ -29,7 +31,7 @@ public class UserEventRequestClientController {
     @PatchMapping("/{requestId}/cancel")
     public ResponseEntity<Object> cancel(@PathVariable Long userId, @PathVariable Long requestId) {
         if (requestId < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         return client.cancel(userId, requestId);
     }

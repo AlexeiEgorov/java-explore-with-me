@@ -49,3 +49,11 @@ compilation_id BIGINT REFERENCES compilations (id) ON DELETE CASCADE,
 event_id BIGINT REFERENCES events (id),
 PRIMARY KEY (compilation_id, event_id)
 );
+
+CREATE TABLE IF NOT EXISTS comments (
+id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+text VARCHAR(2000),
+created_at TIMESTAMP WITHOUT TIME ZONE,
+commentator_id BIGINT REFERENCES users(id),
+event_id BIGINT REFERENCES events(id) ON DELETE CASCADE
+);

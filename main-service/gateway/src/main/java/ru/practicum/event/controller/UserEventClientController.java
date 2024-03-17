@@ -24,6 +24,8 @@ import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ru.practicum.Constants.POSITIVE_ID_CONS;
+
 @Controller
 @RequiredArgsConstructor
 @Validated
@@ -61,7 +63,7 @@ public class UserEventClientController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUserEvent(@PathVariable Long userId, @PathVariable Long id) {
         if (id < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         ResponseEntity<Object> resp = client.getUserEvent(userId, id);
         if (resp.getStatusCode() == HttpStatus.OK) {
@@ -76,7 +78,7 @@ public class UserEventClientController {
     public ResponseEntity<Object> patch(@PathVariable Long userId, @PathVariable Long id,
                                         @Valid @RequestBody EventPatchDto eventPatchDto) {
         if (id < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         if (eventPatchDto.getEventDate() != null) {
             @StartAfterTwoHoursFromNow
@@ -88,7 +90,7 @@ public class UserEventClientController {
     @GetMapping("/{id}/requests")
     public ResponseEntity<Object> getEventRequests(@PathVariable Long userId, @PathVariable Long id) {
         if (id < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         return client.getEventRequests(userId, id);
     }
@@ -100,7 +102,7 @@ public class UserEventClientController {
                                                               EventRequestsConfirmationDto
                                                                       eventRequestsConfirmationDto) {
         if (id < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         return client.updateEventRequestsStatuses(userId, id, eventRequestsConfirmationDto);
     }

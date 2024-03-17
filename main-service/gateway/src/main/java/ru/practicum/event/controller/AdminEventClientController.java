@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static ru.practicum.Constants.DATE_TIME_FORMAT;
+import static ru.practicum.Constants.POSITIVE_ID_CONS;
 
 @Controller
 @RequiredArgsConstructor
@@ -64,7 +65,7 @@ public class AdminEventClientController {
     public ResponseEntity<?> reviewEvent(@PathVariable Long id,
                                               @RequestBody @Valid EventPatchDto eventPatchDto) {
         if (id < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         if (eventPatchDto.getEventDate() != null) {
             @StartAfterTwoHoursFromNow

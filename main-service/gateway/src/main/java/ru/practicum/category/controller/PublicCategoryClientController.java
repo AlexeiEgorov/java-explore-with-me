@@ -14,6 +14,8 @@ import ru.practicum.model.ConstraintViolationException;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
+import static ru.practicum.Constants.POSITIVE_ID_CONS;
+
 @Controller
 @RequiredArgsConstructor
 @Validated
@@ -30,7 +32,7 @@ public class PublicCategoryClientController {
     @GetMapping("/{catId}")
     public ResponseEntity<Object> get(@PathVariable Long catId) {
         if (catId < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         return client.get(catId);
     }

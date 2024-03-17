@@ -13,6 +13,8 @@ import ru.practicum.model.ConstraintViolationException;
 
 import javax.validation.Valid;
 
+import static ru.practicum.Constants.POSITIVE_ID_CONS;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/categories")
@@ -36,7 +38,7 @@ public class AdminCategoryClientController {
     public ResponseEntity<Object> patch(@RequestBody @Valid CategoryDto categoryDto,
                                         @PathVariable Long catId) {
         if (catId < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         return client.patch(categoryDto, catId);
     }
@@ -44,7 +46,7 @@ public class AdminCategoryClientController {
     @DeleteMapping("/{catId}")
     public ResponseEntity<Object> delete(@PathVariable Long catId) {
         if (catId < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         return client.delete(catId);
     }

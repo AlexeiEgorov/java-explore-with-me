@@ -2,6 +2,7 @@ package ru.practicum.compilation.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.CommentsLoader;
 import ru.practicum.ConfirmedRequestsLoader;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.model.CompilationMapper;
@@ -22,6 +23,7 @@ public class PublicCompilationServerController {
     private final EventService eventService;
     private final InitiatorsCategoriesLoader initiatorsCategoriesLoader;
     private final ConfirmedRequestsLoader confirmedRequestsLoader;
+    private final CommentsLoader commentsLoader;
 
     @GetMapping
     public List<CompilationRespDto> getCompilations(
@@ -41,6 +43,7 @@ public class PublicCompilationServerController {
         for (EventPreviewResponseDto dto : confirmedRequestsLoader.loadForEventDtos(events)) {
             eventDtos.put(dto.getId(), dto);
         }
+        commentsLoader.loadForEventPreviewDtos(eventDtos.values());
         List<CompilationRespDto> resp = new ArrayList<>();
         for (Compilation comp : compilations) {
             CompilationRespDto compDto = CompilationMapper.toDto(comp);
@@ -57,6 +60,7 @@ public class PublicCompilationServerController {
         Compilation comp = service.getCompilation(compId);
         CompilationRespDto resp = CompilationMapper.toDto(comp);
         resp.setEvents(initiatorsCategoriesLoader.loadPreviewResponseDtos(comp.getEvents()));
+        commentsLoader.loadForEventPreviewDtos(resp.getEvents());
         confirmedRequestsLoader.loadForEventDtos(resp.getEvents());
         return resp;
     }

@@ -28,6 +28,7 @@ public class EventMapper {
                 event.getRequestModeration(),
                 event.getState(),
                 event.getTitle(),
+                0L,
                 0L);
     }
 
@@ -63,6 +64,7 @@ public class EventMapper {
                 null,
                 event.getPaid(),
                 event.getTitle(),
+                0L,
                 0L);
     }
 

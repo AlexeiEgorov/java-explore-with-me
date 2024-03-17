@@ -27,4 +27,5 @@ public class EventResponseDto implements EventRespDto {
     private final EventStatus state;
     private final String title;
     private Long views;
+    private Long comments;
 }

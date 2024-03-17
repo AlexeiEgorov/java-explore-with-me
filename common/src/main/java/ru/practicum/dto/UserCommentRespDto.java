@@ -12,4 +12,5 @@ public class UserCommentRespDto {
     private final String text;
     private final String createdAt;
     private EventForComment event;
+    private final String lastUpdated;
 }

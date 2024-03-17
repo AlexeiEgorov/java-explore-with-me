@@ -2,6 +2,7 @@ package ru.practicum;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practicum.comment.service.CommentService;
 import ru.practicum.dto.EventRespDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.eventrequest.model.ConfirmedRequests;

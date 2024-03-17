@@ -19,4 +19,5 @@ public class EventPreviewResponseDto implements EventRespDto {
     private final Boolean paid;
     private final String title;
     private Long views;
+    private Long comments;
 }

@@ -6,15 +6,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.comment.CommentRepository;
 import ru.practicum.comment.model.Comment;
+import ru.practicum.comment.model.CommentsCount;
 import ru.practicum.dto.CommentDto;
 import ru.practicum.event.EventRepository;
 import ru.practicum.event.model.Event;
 import ru.practicum.exception.EntityNotFoundException;
+import ru.practicum.model.ConstraintViolationException;
 import ru.practicum.model.EventStatus;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static ru.practicum.LocalConstants.COMMENT;
 import static ru.practicum.LocalConstants.EVENT;
@@ -34,7 +37,7 @@ public class CommentServiceImpl implements CommentService {
             throw new EntityNotFoundException(EVENT, eventId);
         }
         Comment comment = new Comment(null, commentDto.getText(), LocalDateTime.now(),
-        new User(1L, null, null), event);
+        new User(1L, null, null), event, null);
         return repository.save(comment);
     }
 
@@ -43,9 +46,10 @@ public class CommentServiceImpl implements CommentService {
     public Comment patch(Long userId, Long id, CommentDto commentDto) {
         Comment comment = get(id);
         if (!comment.getCommentator().getId().equals(userId)) {
-            throw new EntityNotFoundException(COMMENT, id);
+            throw new ConstraintViolationException("You are not allowed to change this comment");
         }
         comment.setText(commentDto.getText());
+        comment.setLastUpdated(LocalDateTime.now());
         return repository.save(comment);
     }
 
@@ -80,6 +84,7 @@ public class CommentServiceImpl implements CommentService {
     public Comment patchByAdmin(Long id, CommentDto commentDto) {
         Comment comment = get(id);
         comment.setText(commentDto.getText());
+        comment.setLastUpdated(LocalDateTime.now());
         return repository.save(comment);
     }
 
@@ -92,5 +97,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> findAllByEventId(Long eventId) {
         return repository.findAllByEventId(eventId);
+    }
+
+    @Override
+    public List<CommentsCount> getCommentsCountByEventIds(Set<Long> eventIds) {
+        return repository.findCommentsCountByEventIds(eventIds);
     }
 }

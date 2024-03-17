@@ -13,4 +13,5 @@ public class CommentRespDto {
     private final String createdAt;
     private Initiator commentator;
     private final Long event;
+    private final String lastUpdated;
 }

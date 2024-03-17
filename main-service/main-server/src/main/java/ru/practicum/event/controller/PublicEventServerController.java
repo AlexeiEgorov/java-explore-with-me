@@ -3,15 +3,13 @@ package ru.practicum.event.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.CommentsLoader;
 import ru.practicum.ConfirmedRequestsLoader;
 import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.comment.model.Comment;
 import ru.practicum.comment.model.CommentMapper;
 import ru.practicum.comment.service.CommentService;
-import ru.practicum.dto.CommentRespDto;
-import ru.practicum.dto.EventFullResponseDto;
-import ru.practicum.dto.EventPreviewResponseDto;
-import ru.practicum.dto.Initiator;
+import ru.practicum.dto.*;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventMapper;
 import ru.practicum.event.service.EventService;
@@ -34,6 +32,7 @@ public class PublicEventServerController {
     private final ConfirmedRequestsLoader confirmedRequestsLoader;
     private final CommentService commentService;
     private final UserService userService;
+    private final CommentsLoader commentsLoader;
 
     @GetMapping
     public List<EventPreviewResponseDto> searchEvents(
@@ -50,6 +49,7 @@ public class PublicEventServerController {
         List<Event> events = service.searchEventsForVisitor(text, categories, paid, rangeStart,
                 rangeEnd, onlyAvailable, sort, from, size);
         List<EventPreviewResponseDto> resp = initiatorsCategoriesLoader.loadPreviewResponseDtos(events);
+        commentsLoader.loadForEventPreviewDtos(resp);
         return confirmedRequestsLoader.loadForEventDtos(resp);
 
     }

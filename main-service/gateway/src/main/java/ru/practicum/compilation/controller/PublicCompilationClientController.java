@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static ru.practicum.Constants.POSITIVE_ID_CONS;
+
 @Controller
 @AllArgsConstructor
 @Validated
@@ -54,7 +56,7 @@ public class PublicCompilationClientController {
     @GetMapping("/{compId}")
     public ResponseEntity<Object> getCompilation(@PathVariable Long compId) {
         if (compId < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         ResponseEntity<Object> resp = client.getCompilation(compId);
         if (resp.getStatusCode() == HttpStatus.OK) {

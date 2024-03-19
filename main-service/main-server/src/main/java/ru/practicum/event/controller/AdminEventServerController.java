@@ -3,6 +3,7 @@ package ru.practicum.event.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.CommentsCountLoader;
 import ru.practicum.ConfirmedRequestsLoader;
 import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.dto.EventPatchDto;
@@ -25,6 +26,7 @@ public class AdminEventServerController {
     private final EventService service;
     private final InitiatorsCategoriesLoader initiatorsCategoriesLoader;
     private final ConfirmedRequestsLoader confirmedRequestsLoader;
+    private final CommentsCountLoader commentsCountLoader;
 
     @GetMapping
     public List<EventResponseDto>  searchEvents(
@@ -38,6 +40,7 @@ public class AdminEventServerController {
     ) {
         List<Event> events = service.searchEventsForAdmin(users, states, categories, rangeStart, rangeEnd, from, size);
         List<EventResponseDto> resp = initiatorsCategoriesLoader.loadFullResponseDtos(events);
+        commentsCountLoader.loadForEventResponseDtos(resp);
         return confirmedRequestsLoader.loadForEventDtos(resp);
     }
 
@@ -47,8 +50,9 @@ public class AdminEventServerController {
         EventResponseDto resp = EventMapper.toResponseDto(event);
         resp.setCategory(CategoryMapper.toEventCategoryDto(event.getCategory()));
         resp.setInitiator(UserMapper.toInitiator(event.getInitiator()));
-        confirmedRequestsLoader.loadForEventDtos(List.of(resp));
-        return resp;
+        List<EventResponseDto> respList = List.of(resp);
+        commentsCountLoader.loadForEventResponseDtos(respList);
+        return confirmedRequestsLoader.loadForEventDtos(respList).get(0);
     }
 
 }

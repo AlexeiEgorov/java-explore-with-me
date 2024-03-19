@@ -10,10 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ConfirmedRequestsLoader;
 import ru.practicum.category.CategoryRepository;
 import ru.practicum.category.model.Category;
-import ru.practicum.dto.EventDto;
-import ru.practicum.dto.EventPatchDto;
-import ru.practicum.dto.EventRequestStatus;
-import ru.practicum.dto.EventRequestsConfirmationDto;
+import ru.practicum.dto.*;
 import ru.practicum.event.EventRepository;
 import ru.practicum.event.dto.EventRequestsConfirmationResultDto;
 import ru.practicum.event.model.Event;
@@ -319,5 +316,10 @@ public class EventServiceImpl implements EventService {
     @Override
     public Set<Event> findAllByIds(Set<Long> ids) {
         return repository.findAllByIdIn(ids);
+    }
+
+    @Override
+    public List<EventForComment> findAllEventForComment(Set<Long> ids) {
+        return repository.getEventForCommentByIds(ids);
     }
 }

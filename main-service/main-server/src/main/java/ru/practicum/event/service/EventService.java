@@ -2,6 +2,7 @@ package ru.practicum.event.service;
 
 import ru.practicum.category.model.Category;
 import ru.practicum.dto.EventDto;
+import ru.practicum.dto.EventForComment;
 import ru.practicum.dto.EventPatchDto;
 import ru.practicum.dto.EventRequestsConfirmationDto;
 import ru.practicum.event.dto.EventRequestsConfirmationResultDto;
@@ -53,4 +54,6 @@ public interface EventService {
     Event getEventForVisitor(Long id);
 
     Set<Event> findAllByIds(Set<Long> sets);
+
+    List<EventForComment> findAllEventForComment(Set<Long> ids);
 }

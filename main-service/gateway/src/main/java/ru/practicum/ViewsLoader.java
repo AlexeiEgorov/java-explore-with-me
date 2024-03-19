@@ -26,11 +26,7 @@ public class ViewsLoader {
         }
         Map<String, List<EventRespDto>> eventMap = new HashMap<>();
         LocalDateTime earliestEventDate = earliestDatePossible;
-        if (events.iterator().next() instanceof EventPreviewResponseDto) {
-            for (EventRespDto event : events) {
-                eventMap.computeIfAbsent("/events/" + event.getId().toString(), k -> new ArrayList<>()).add(event);
-            }
-        } else {
+        if (events.iterator().next() instanceof EventResponseDto) {
             for (EventRespDto event : events) {
                 EventResponseDto eventResponseDto = (EventResponseDto) event;
                 if (eventResponseDto.getEventDate() != null) {
@@ -41,6 +37,10 @@ public class ViewsLoader {
                         earliestEventDate = eventDate;
                     }
                 }
+            }
+        } else {
+            for (EventRespDto event : events) {
+                eventMap.computeIfAbsent("/events/" + event.getId().toString(), k -> new ArrayList<>()).add(event);
             }
         }
         if (!eventMap.isEmpty()) {

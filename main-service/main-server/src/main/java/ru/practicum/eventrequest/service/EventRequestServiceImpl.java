@@ -13,21 +13,20 @@ import ru.practicum.exception.EntityNotFoundException;
 import ru.practicum.model.ConstraintViolationException;
 import ru.practicum.model.EventStatus;
 import ru.practicum.model.NotAllowedActionException;
-import ru.practicum.user.UserRepository;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-import static ru.practicum.LocalConstants.*;
+import static ru.practicum.LocalConstants.EVENT;
+import static ru.practicum.LocalConstants.REQUEST;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class EventRequestServiceImpl implements EventRequestService {
     private final EventRequestRepository repository;
-    private final UserRepository userRepository;
     private final EventRepository eventRepository;
 
     @Override
@@ -40,8 +39,8 @@ public class EventRequestServiceImpl implements EventRequestService {
         if (!event.getState().equals(EventStatus.PUBLISHED)) {
             throw new ConstraintViolationException("The event's not yet accepted by the administrators.");
         }
-        if (repository.countConfirmedRequestsForEvents(Set.of(event.getId())).get(0).getCount()
-                .equals(event.getParticipantLimit())
+        List<ConfirmedRequests> eventConfirmedReqs = getConfirmedRequestsForEvents(Set.of(event.getId()));
+        if ((eventConfirmedReqs.isEmpty() ? 0L : eventConfirmedReqs.get(0).getCount()) == (event.getParticipantLimit())
                 && event.getParticipantLimit() != 0) {
             throw new ConstraintViolationException("The participant limit is reached.");
         }

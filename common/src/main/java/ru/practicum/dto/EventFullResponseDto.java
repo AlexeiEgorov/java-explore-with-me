@@ -6,11 +6,13 @@ import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.model.EventStatus;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
-public class EventResponseDto implements EventRespDto {
+public class EventFullResponseDto implements EventRespDto {
     private final String annotation;
     private EventCategoryDto category;
     private Long confirmedRequests;
@@ -27,5 +29,5 @@ public class EventResponseDto implements EventRespDto {
     private final EventStatus state;
     private final String title;
     private Long views;
-    private Long comments;
+    private List<CommentRespDto> comments;
 }

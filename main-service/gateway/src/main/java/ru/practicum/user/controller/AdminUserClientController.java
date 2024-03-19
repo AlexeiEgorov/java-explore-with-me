@@ -16,6 +16,8 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+import static ru.practicum.Constants.POSITIVE_ID_CONS;
+
 @Controller
 @RequiredArgsConstructor
 @Validated
@@ -46,7 +48,7 @@ public class AdminUserClientController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Long id) {
         if (id < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         return client.delete(id);
     }

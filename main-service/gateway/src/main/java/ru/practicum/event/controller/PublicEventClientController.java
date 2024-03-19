@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.ViewsLoader;
 import ru.practicum.dto.EndpointHitStatDto;
+import ru.practicum.dto.EventFullResponseDto;
 import ru.practicum.dto.EventPreviewResponseDto;
-import ru.practicum.dto.EventResponseDto;
 import ru.practicum.event.EventClient;
 import ru.practicum.model.ConstraintViolationException;
 import ru.practicum.model.NotAllowedActionException;
@@ -29,8 +29,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ru.practicum.Constants.DATE_TIME_FORMAT;
-import static ru.practicum.Constants.FORMATTER;
+import static ru.practicum.Constants.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -83,7 +82,7 @@ public class PublicEventClientController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getEventForVisitor(@PathVariable Long id, HttpServletRequest request) {
         if (id < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         String requestTime = LocalDateTime.now().format(FORMATTER);
 
@@ -95,7 +94,7 @@ public class PublicEventClientController {
                         requestTime));
         ResponseEntity<Object> resp = client.getEventForVisitor(id);
         if (resp.getStatusCode() == HttpStatus.OK) {
-            EventResponseDto eventDto = objectMapper.convertValue(resp.getBody(), EventResponseDto.class);
+            EventFullResponseDto eventDto = objectMapper.convertValue(resp.getBody(), EventFullResponseDto.class);
             viewsLoader.loadViewsForEventDtos(List.of(eventDto));
             return ResponseEntity.ok(eventDto);
         }

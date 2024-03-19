@@ -14,6 +14,8 @@ import ru.practicum.ViewsLoader;
 import ru.practicum.model.ConstraintViolationException;
 import ru.practicum.model.Marker;
 
+import static ru.practicum.Constants.POSITIVE_ID_CONS;
+
 @Controller
 @AllArgsConstructor
 @RequestMapping(path = "/admin/compilations")
@@ -36,7 +38,7 @@ public class AdminCompilationClientController {
     @DeleteMapping("/{compId}")
     public ResponseEntity<Object> delete(@PathVariable Long compId) {
         if (compId < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         return client.delete(compId);
     }
@@ -45,7 +47,7 @@ public class AdminCompilationClientController {
     public ResponseEntity<Object> patch(@PathVariable Long compId,
                              @RequestBody @Validated(Marker.Update.class) CompilationDto compilationDto) {
         if (compId < 1) {
-            throw new ConstraintViolationException("Id should be positive");
+            throw new ConstraintViolationException(POSITIVE_ID_CONS);
         }
         ResponseEntity<Object> resp = client.patch(compId, compilationDto);
         if (resp.getStatusCode() == HttpStatus.OK) {

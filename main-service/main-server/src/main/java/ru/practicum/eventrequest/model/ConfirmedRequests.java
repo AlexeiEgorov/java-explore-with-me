@@ -1,13 +1,6 @@
 package ru.practicum.eventrequest.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
-@AllArgsConstructor
-public class ConfirmedRequests {
-    private Long eventId;
-    private Long count;
+public interface ConfirmedRequests {
+    Long getEventId();
+    Long getCount();
 }

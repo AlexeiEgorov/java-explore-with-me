@@ -3,7 +3,7 @@ package ru.practicum.event.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.CommentsLoader;
+import ru.practicum.CommentsCountLoader;
 import ru.practicum.ConfirmedRequestsLoader;
 import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.comment.model.Comment;
@@ -32,7 +32,7 @@ public class PublicEventServerController {
     private final ConfirmedRequestsLoader confirmedRequestsLoader;
     private final CommentService commentService;
     private final UserService userService;
-    private final CommentsLoader commentsLoader;
+    private final CommentsCountLoader commentsCountLoader;
 
     @GetMapping
     public List<EventPreviewResponseDto> searchEvents(
@@ -49,7 +49,7 @@ public class PublicEventServerController {
         List<Event> events = service.searchEventsForVisitor(text, categories, paid, rangeStart,
                 rangeEnd, onlyAvailable, sort, from, size);
         List<EventPreviewResponseDto> resp = initiatorsCategoriesLoader.loadPreviewResponseDtos(events);
-        commentsLoader.loadForEventPreviewDtos(resp);
+        commentsCountLoader.loadForEventPreviewDtos(resp);
         return confirmedRequestsLoader.loadForEventDtos(resp);
 
     }

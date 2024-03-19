@@ -23,7 +23,7 @@ public class ConfirmedRequestsLoader {
         Map<Long, Long> confirmedCounts = confirmedRequests.stream()
                 .collect(Collectors.toMap(ConfirmedRequests::getEventId, ConfirmedRequests::getCount));
         for (EventRespDto event : events) {
-            event.setConfirmedRequests(confirmedCounts.get(event.getId()));
+            event.setConfirmedRequests(confirmedCounts.getOrDefault(event.getId(), 0L));
         }
         return events;
     }
@@ -34,12 +34,13 @@ public class ConfirmedRequestsLoader {
         Map<Long, Long> confirmedCounts = confirmedRequests.stream()
                 .collect(Collectors.toMap(ConfirmedRequests::getEventId, ConfirmedRequests::getCount));
         for (EventRespDto event : events) {
-            event.setConfirmedRequests(confirmedCounts.get(event.getId()));
+            event.setConfirmedRequests(confirmedCounts.getOrDefault(event.getId(), 0L));
         }
         return events;
     }
 
     public Long getConfirmedCountForEvent(Event event) {
-        return service.getConfirmedRequestsForEvents(Set.of(event.getId())).get(0).getCount();
+        List<ConfirmedRequests> resp = service.getConfirmedRequestsForEvents(Set.of(event.getId()));
+        return resp.isEmpty() ? 0L : resp.get(0).getCount();
     }
 }

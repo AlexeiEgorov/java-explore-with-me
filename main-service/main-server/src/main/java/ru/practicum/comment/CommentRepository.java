@@ -15,7 +15,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findAllByEventId(Long eventId);
 
-    @Query("SELECT new ru.practicum.comment.model.CommentsCount(c.event.id, COUNT(c)) FROM Comment c " +
+    @Query("SELECT c.event.id as eventId, COUNT(c) as count FROM Comment c " +
             "WHERE c.event.id IN ?1 GROUP BY c.event.id")
     List<CommentsCount> findCommentsCountByEventIds(Set<Long> eventIds);
 }

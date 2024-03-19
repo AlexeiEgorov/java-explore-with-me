@@ -25,10 +25,8 @@ public interface EventRequestRepository extends JpaRepository<EventRequest, Long
 
     EventRequest findByEventIdAndRequesterId(Long eventId, Long requesterId);
 
-    @Query("SELECT new ru.practicum.eventrequest.model.ConfirmedRequests(e.id, COALESCE(COUNT(er), 0)) " +
-            "FROM Event e " +
-            "LEFT JOIN EventRequest er ON e.id = er.event.id AND er.status = 'CONFIRMED' " +
-            "WHERE e.id IN ?1 " +
-            "GROUP BY e.id")
+    @Query("SELECT er.event.id as eventId, COUNT(er) as count " +
+            "FROM EventRequest er WHERE er.event.id IN ?1 AND er.status = 'CONFIRMED' " +
+            "GROUP BY er.event.id")
     List<ConfirmedRequests> countConfirmedRequestsForEvents(Set<Long> eventsIds);
 }

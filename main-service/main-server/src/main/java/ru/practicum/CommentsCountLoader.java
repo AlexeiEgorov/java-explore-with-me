@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class CommentsLoader {
+public class CommentsCountLoader {
     private final CommentService service;
 
     public void loadForEventPreviewDtos(Collection<EventPreviewResponseDto> events) {
@@ -24,7 +24,7 @@ public class CommentsLoader {
         Map<Long, Long> commentCounts = service.getCommentsCountByEventIds(eventIds).stream()
                 .collect(Collectors.toMap(CommentsCount::getEventId, CommentsCount::getCount));
         for (EventPreviewResponseDto event : events) {
-            event.setComments(commentCounts.get(event.getId()));
+            event.setComments(commentCounts.getOrDefault(event.getId(), 0L));
         }
 
     }
@@ -35,7 +35,7 @@ public class CommentsLoader {
         Map<Long, Long> commentCounts = service.getCommentsCountByEventIds(eventIds).stream()
                 .collect(Collectors.toMap(CommentsCount::getEventId, CommentsCount::getCount));
         for (EventResponseDto event : events) {
-            event.setComments(commentCounts.get(event.getId()));
+            event.setComments(commentCounts.getOrDefault(event.getId(), 0L));
         }
 
     }
@@ -46,7 +46,7 @@ public class CommentsLoader {
         Map<Long, Long> commentCounts = service.getCommentsCountByEventIds(eventIds).stream()
                 .collect(Collectors.toMap(CommentsCount::getEventId, CommentsCount::getCount));
         for (EventPreviewResponseDto event : events) {
-            event.setComments(commentCounts.get(event.getId()));
+            event.setComments(commentCounts.getOrDefault(event.getId(), 0L));
         }
 
     }

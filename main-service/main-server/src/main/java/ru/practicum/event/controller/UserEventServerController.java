@@ -3,7 +3,7 @@ package ru.practicum.event.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.CommentsLoader;
+import ru.practicum.CommentsCountLoader;
 import ru.practicum.ConfirmedRequestsLoader;
 import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.dto.EventDto;
@@ -28,7 +28,7 @@ public class UserEventServerController {
     private final EventService service;
     private final InitiatorsCategoriesLoader initiatorsCategoriesLoader;
     private final ConfirmedRequestsLoader confirmedRequestsLoader;
-    private final CommentsLoader commentsLoader;
+    private final CommentsCountLoader commentsCountLoader;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -46,7 +46,7 @@ public class UserEventServerController {
                                                   @RequestParam(defaultValue = "10") Integer size) {
         List<Event> events = service.getUserEvents(userId, from, size);
         List<EventResponseDto> resp = initiatorsCategoriesLoader.loadFullResponseDtos(events);
-        commentsLoader.loadForEventResponseDtos(resp);
+        commentsCountLoader.loadForEventResponseDtos(resp);
         return confirmedRequestsLoader.loadForEventDtos(resp);
     }
 
@@ -57,7 +57,7 @@ public class UserEventServerController {
         resp.setCategory(CategoryMapper.toEventCategoryDto(event.getCategory()));
         resp.setInitiator(UserMapper.toInitiator(event.getInitiator()));
         List<EventResponseDto> respList = List.of(resp);
-        commentsLoader.loadForEventResponseDtos(respList);
+        commentsCountLoader.loadForEventResponseDtos(respList);
         return confirmedRequestsLoader.loadForEventDtos(respList).get(0);
     }
 
@@ -69,7 +69,7 @@ public class UserEventServerController {
         resp.setCategory(CategoryMapper.toEventCategoryDto(event.getCategory()));
         resp.setInitiator(UserMapper.toInitiator(event.getInitiator()));
         List<EventResponseDto> respList = List.of(resp);
-        commentsLoader.loadForEventResponseDtos(respList);
+        commentsCountLoader.loadForEventResponseDtos(respList);
         return confirmedRequestsLoader.loadForEventDtos(respList).get(0);
     }
 

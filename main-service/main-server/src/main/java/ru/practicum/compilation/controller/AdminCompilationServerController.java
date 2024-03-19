@@ -3,7 +3,7 @@ package ru.practicum.compilation.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.CommentsLoader;
+import ru.practicum.CommentsCountLoader;
 import ru.practicum.ConfirmedRequestsLoader;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.model.CompilationMapper;
@@ -24,7 +24,7 @@ public class AdminCompilationServerController {
     private final InitiatorsCategoriesLoader initiatorsCategoriesLoader;
     private final EventService eventService;
     private final ConfirmedRequestsLoader confirmedRequestsLoader;
-    private final CommentsLoader commentsLoader;
+    private final CommentsCountLoader commentsCountLoader;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -34,7 +34,7 @@ public class AdminCompilationServerController {
                 .collect(Collectors.toSet())));
         CompilationRespDto resp = CompilationMapper.toDto(comp);
         resp.setEvents(initiatorsCategoriesLoader.loadPreviewResponseDtos(comp.getEvents()));
-        commentsLoader.loadForEventPreviewDtos(resp.getEvents());
+        commentsCountLoader.loadForEventPreviewDtos(resp.getEvents());
         confirmedRequestsLoader.loadForEventDtos(resp.getEvents());
         return resp;
     }
@@ -50,7 +50,7 @@ public class AdminCompilationServerController {
         Compilation comp = compilationService.patch(compId, updateDto);
         CompilationRespDto resp = CompilationMapper.toDto(comp);
         resp.setEvents(initiatorsCategoriesLoader.loadPreviewResponseDtos(comp.getEvents()));
-        commentsLoader.loadForEventPreviewDtos(resp.getEvents());
+        commentsCountLoader.loadForEventPreviewDtos(resp.getEvents());
         confirmedRequestsLoader.loadForEventDtos(resp.getEvents());
         return resp;
     }
